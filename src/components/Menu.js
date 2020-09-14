@@ -7,10 +7,18 @@ import Popper from '@material-ui/core/Popper';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import { makeStyles } from '@material-ui/core/styles';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { useDispatch } from 'react-redux';
+import { OPEN_DIALOG } from '../redux/types';
+import { logout } from '../redux/actions/user';
 
 const useStyles = makeStyles((theme) => ({
 	root  : {
-		display : 'flex'
+		display  : 'flex',
+		position : 'absolute',
+		zIndex   : 3,
+		cursor   : 'pointer',
+		left     : 500
 	},
 	paper : {
 		marginRight : theme.spacing(2)
@@ -18,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function MenuListComposition() {
+	const dispatch = useDispatch();
 	const classes = useStyles();
 	const [
 		open,
@@ -44,7 +53,14 @@ export default function MenuListComposition() {
 		}
 	}
 
-	// return focus to the button when we transitioned from !open -> open
+	const handleCreate = (type) => {
+		dispatch({ type: OPEN_DIALOG, payload: type });
+	};
+
+	const handleLogout = () => {
+		dispatch(logout());
+	};
+
 	const prevOpen = useRef(open);
 	useEffect(
 		() => {
@@ -62,7 +78,7 @@ export default function MenuListComposition() {
 	return (
 		<div className={classes.root}>
 			<div>
-				<Button
+				<MoreVertIcon
 					ref={anchorRef}
 					aria-controls={
 
@@ -71,9 +87,7 @@ export default function MenuListComposition() {
 					}
 					aria-haspopup="true"
 					onClick={handleToggle}
-				>
-					Toggle Menu Grow
-				</Button>
+				/>
 				<Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
 					{({ TransitionProps, placement }) => (
 						<Grow
@@ -88,9 +102,10 @@ export default function MenuListComposition() {
 							<Paper style={{ zIndex: '100' }}>
 								<ClickAwayListener onClickAway={handleClose}>
 									<MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
-										<MenuItem onClick={() => console.log('Profile')}>Profile</MenuItem>
-										<MenuItem onClick={() => console.log('Account')}>My account</MenuItem>
-										<MenuItem onClick={() => console.log('logout')}>Logout</MenuItem>
+										<MenuItem onClick={() => handleCreate('group')}>New Group</MenuItem>
+										<MenuItem onClick={() => handleCreate('contact')}>New Contact</MenuItem>
+										<MenuItem onClick={() => console.log('logout')}>Profile</MenuItem>
+										<MenuItem onClick={handleLogout}>Logout</MenuItem>
 									</MenuList>
 								</ClickAwayListener>
 							</Paper>

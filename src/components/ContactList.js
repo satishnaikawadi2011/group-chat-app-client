@@ -11,7 +11,7 @@ function ContactList(props) {
 		setLoading
 	] = useState(true);
 	const dispatch = useDispatch();
-	const { load } = useQuery(GET_LATEST_MESSAGES, {
+	useQuery(GET_LATEST_MESSAGES, {
 		onCompleted(data) {
 			dispatch({ type: SET_LATEST_MESSAGES, payload: data.getLatestMessages });
 			setLoading(false);

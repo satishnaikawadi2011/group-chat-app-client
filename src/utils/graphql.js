@@ -43,3 +43,17 @@ export const GET_LATEST_MESSAGES = gql`
 		getLatestMessages
 	}
 `;
+
+export const CREATE_GROUP = gql`
+	mutation createGroup($name: String!) {
+		createGroup(name: $name) {
+			name
+		}
+	}
+`;
+
+export const ADD_CONTACT = gql`
+	mutation addContact($id: String!) {
+		addContact(id: $id)
+	}
+`;

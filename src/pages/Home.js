@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import Contact from '../components/Contact';
+import React, { useState } from 'react';
 import Paper from '@material-ui/core/Paper';
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import Menu from '../components/Menu';
-import { useLazyQuery, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { GET_USER } from '../utils/graphql';
 import { useDispatch } from 'react-redux';
 import { getUserData } from '../redux/actions/user';
 import ContactList from '../components/ContactList';
+import Menu from '../components/Menu';
+import DialogForm from '../components/DialogForm';
 
 const useStyles = makeStyles({
 	container : {
@@ -16,7 +16,6 @@ const useStyles = makeStyles({
 		overflow : 'hidden',
 		padding  : 10,
 		margin   : '5vh 10vw 5vh 10vw'
-		// backgroundColor : 'red'
 	}
 });
 
@@ -30,7 +29,7 @@ function Home(props) {
 		userData,
 		setUserData
 	] = useState(null);
-	const { load } = useQuery(GET_USER, {
+	useQuery(GET_USER, {
 		onError(err) {
 			console.log(err);
 		},
@@ -48,8 +47,9 @@ function Home(props) {
 	else {
 		return (
 			<React.Fragment>
+				<DialogForm />
 				<Paper className={classes.container}>
-					{/* <Menu /> */}
+					<Menu />
 					<div style={{ display: 'flex' }}>
 						<div
 							style={{

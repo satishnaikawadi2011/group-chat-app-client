@@ -57,7 +57,7 @@ function Login(props) {
 		},
 		onCompleted(data) {
 			dispatch(login(data.login.token));
-			props.history.push('/');
+			window.location.href = '/';
 		}
 	});
 	const classes = useStyles();

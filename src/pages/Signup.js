@@ -54,7 +54,7 @@ function Signup(props) {
 	] = useMutation(SIGNUP_USER, {
 		update(_, res) {
 			dispatch(signup(res.data.signup.token));
-			props.history.push('/');
+			window.location.href = '/';
 		},
 		onError(err) {
 			if (err.graphQLErrors[0]) {

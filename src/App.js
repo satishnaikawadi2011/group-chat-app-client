@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './App.css';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { CssBaseline, Switch as SwitchBtn } from '@material-ui/core';
-import { BrowserRouter as Router, Switch, useHistory } from 'react-router-dom';
+import { BrowserRouter as Router, Switch } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -11,12 +11,9 @@ import { logout } from './redux/actions/user';
 import ProtectedRoute from './utils/ProtectedRoute';
 import store from './redux/store';
 import { LOGIN } from './redux/types';
-import { useDispatch } from 'react-redux';
 import history from './utils/history';
 
 function App() {
-	// const history = useHistory();
-	const dispatch = useDispatch();
 	const token = localStorage.getItem('token');
 	if (token) {
 		const decodedToken = jwtDecode(token);

@@ -35,7 +35,7 @@ const useStyle = makeStyles({
 const getDiff = (a, b) => {
 	const d1 = moment(a);
 	const d2 = moment(b);
-	return d1.diff(b, 'days');
+	return d1.diff(d2, 'days');
 };
 
 function Contact(props) {
