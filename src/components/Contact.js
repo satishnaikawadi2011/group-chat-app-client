@@ -4,6 +4,8 @@ import Avatar from '@material-ui/core/Avatar';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { Typography } from '@material-ui/core';
 import moment from 'moment';
+import { useDispatch } from 'react-redux';
+import { SELECT_CONTACT } from '../redux/types';
 
 const useStyle = makeStyles({
 	paper       : {
@@ -39,12 +41,16 @@ const getDiff = (a, b) => {
 };
 
 function Contact(props) {
+	const dispatch = useDispatch();
 	let formatedDate;
 
 	const classes = useStyle();
 	const groupAvatar = 'https://cdn.pixabay.com/photo/2017/11/10/05/46/group-2935521_960_720.png';
 	const soloAvatar = 'https://cdn.pixabay.com/photo/2017/11/10/05/48/user-2935527_960_720.png';
 	const { latestMessage, name, type } = props;
+	const handleContact = () => {
+		dispatch({ type: SELECT_CONTACT, payload: { name, type } });
+	};
 	if (getDiff(new Date(), latestMessage.createdAt) < 1) {
 		formatedDate = moment(latestMessage.createdAt).format('hh:mm a');
 	}
@@ -56,7 +62,7 @@ function Contact(props) {
 	}
 	return (
 		<React.Fragment>
-			<Paper className={classes.paper}>
+			<Paper className={classes.paper} onClick={handleContact}>
 				<Avatar
 					className={classes.avatar}
 					src={

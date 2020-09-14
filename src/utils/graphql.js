@@ -57,3 +57,16 @@ export const ADD_CONTACT = gql`
 		addContact(id: $id)
 	}
 `;
+
+export const GET_MESSAGES = gql`
+	query getMessages($otherUser: String!, $type: String!) {
+		getMessages(otherUser: $otherUser, type: $type) {
+			content
+			from
+			to
+			id
+			type
+			createdAt
+		}
+	}
+`;

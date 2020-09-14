@@ -54,3 +54,8 @@ body {
 
 	filter: progid: DXImageTransform.Microsoft.gradient(startColorstr="#95F9C3", endColorstr="#0B3866", GradientType=1);
 }
+
+.messages {
+	display: flex;
+	flex-direction: column-reverse;
+}
