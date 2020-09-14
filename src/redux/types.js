@@ -5,3 +5,4 @@ export const SIGNUP = 'SIGNUP';
 export const SET_USER = 'SET_USER';
 
 // TODO: Data related types (messages and groups)
+export const SET_LATEST_MESSAGES = 'SET_LATEST_MESSAGES';

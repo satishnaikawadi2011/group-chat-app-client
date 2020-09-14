@@ -31,3 +31,15 @@ export const LOGIN_USER = gql`
 		}
 	}
 `;
+
+export const GET_USER = gql`
+	query getUser {
+		getUser
+	}
+`;
+
+export const GET_LATEST_MESSAGES = gql`
+	query getLatestMessages {
+		getLatestMessages
+	}
+`;

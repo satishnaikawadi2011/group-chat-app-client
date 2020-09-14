@@ -32,16 +32,28 @@ const useStyle = makeStyles({
 	}
 });
 
+const getDiff = (a, b) => {
+	const d1 = moment(a);
+	const d2 = moment(b);
+	return d1.diff(b, 'days');
+};
+
 function Contact(props) {
+	let formatedDate;
+
 	const classes = useStyle();
 	const groupAvatar = 'https://cdn.pixabay.com/photo/2017/11/10/05/46/group-2935521_960_720.png';
 	const soloAvatar = 'https://cdn.pixabay.com/photo/2017/11/10/05/48/user-2935527_960_720.png';
-	const message = {
-		from      : 'Saty',
-		createdAt : new Date().toISOString(),
-		content   : 'Hi this is a test message! Lorem ipsum, dolor sit amet consectetur adipisicing elit. A, quas.',
-		type      : 'group'
-	};
+	const { latestMessage, name, type } = props;
+	if (getDiff(new Date(), latestMessage.createdAt) < 1) {
+		formatedDate = moment(latestMessage.createdAt).format('hh:mm a');
+	}
+	else if (getDiff(new Date(), latestMessage.createdAt) > 7) {
+		formatedDate = moment(latestMessage.createdAt).format('DD/MM/YYYY');
+	}
+	else {
+		formatedDate = moment(latestMessage.createdAt).format('dddd');
+	}
 	return (
 		<React.Fragment>
 			<Paper className={classes.paper}>
@@ -49,22 +61,23 @@ function Contact(props) {
 					className={classes.avatar}
 					src={
 
-							message.type === 'group' ? groupAvatar :
+							type === 'group' ? groupAvatar :
 							soloAvatar
 					}
 				/>
 				<div>
 					<Typography className={`${classes.contactName} truncate`} variant="h6">
-						{message.from}
+						{name}
 					</Typography>
 					<Typography className={`${classes.content} truncate`} variant="body2">
 						{
-							message.type === 'personal' ? message.content :
-							`${message.from} : ${message.content}`}
+							latestMessage ? type === 'personal' ? latestMessage.content :
+							`${latestMessage.from} : ${latestMessage.content}` :
+							'You are connected now !'}
 					</Typography>
 				</div>
 				<Typography className={classes.time} variant="body2">
-					{moment(message.createdAt).format('hh:mm')}
+					{latestMessage && formatedDate}
 				</Typography>
 			</Paper>
 		</React.Fragment>

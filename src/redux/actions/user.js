@@ -1,7 +1,11 @@
-import { LOGIN, LOGOUT, SIGNUP } from '../types';
+import { LOGIN, LOGOUT, SET_USER, SIGNUP } from '../types';
 
-export const login = (payload) => (dispatch) => {
-	dispatch({ type: LOGIN, payload });
+export const login = (payload) => async (dispatch) => {
+	try {
+		dispatch({ type: LOGIN, payload });
+	} catch (err) {
+		console.log(err);
+	}
 };
 
 export const signup = (payload) => (dispatch) => {
@@ -11,4 +15,8 @@ export const signup = (payload) => (dispatch) => {
 export const logout = () => (dispatch) => {
 	dispatch({ type: LOGOUT });
 	localStorage.removeItem('token');
+};
+
+export const getUserData = (payload) => (dispatch) => {
+	dispatch({ type: SET_USER, payload });
 };

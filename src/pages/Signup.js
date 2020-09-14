@@ -53,7 +53,7 @@ function Signup(props) {
 		{ loading }
 	] = useMutation(SIGNUP_USER, {
 		update(_, res) {
-			dispatch(signup(res.data.signup));
+			dispatch(signup(res.data.signup.token));
 			props.history.push('/');
 		},
 		onError(err) {

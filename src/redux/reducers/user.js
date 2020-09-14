@@ -1,4 +1,4 @@
-import { SIGNUP, LOGOUT, LOGIN } from '../types';
+import { SIGNUP, LOGOUT, LOGIN, SET_USER } from '../types';
 
 const initialState = {
 	token    : null,
@@ -9,10 +9,14 @@ export default function(state = initialState, action) {
 	switch (action.type) {
 		case SIGNUP:
 		case LOGIN:
-			localStorage.setItem('token', action.payload.token);
+			localStorage.setItem('token', action.payload);
 			return {
 				...state,
-				token    : action.payload.token,
+				token : action.payload
+			};
+		case SET_USER:
+			return {
+				...state,
 				userData : action.payload
 			};
 		case LOGOUT:

@@ -53,13 +53,10 @@ function Login(props) {
 		{ loading }
 	] = useLazyQuery(LOGIN_USER, {
 		onError(err) {
-			// console.log(err.graphQLErrors[0].extensions.errors);
 			setErrors(err.graphQLErrors[0].extensions.errors);
 		},
 		onCompleted(data) {
-			// dispatch({ type: LOGIN, payload: data.login });
-			dispatch(login(data.login));
-			// window.location.href = '/';
+			dispatch(login(data.login.token));
 			props.history.push('/');
 		}
 	});
