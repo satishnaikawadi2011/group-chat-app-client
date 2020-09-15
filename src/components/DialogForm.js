@@ -7,7 +7,9 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { useDispatch, useSelector } from 'react-redux';
-import { CLOSE_DIALOG } from '../redux/types';
+import { ADD_CONTACT, CLOSE_DIALOG } from '../redux/types';
+import { useMutation } from '@apollo/client';
+import { CREATE_GROUP, ADD_CONTACT_MUT } from '../utils/graphql';
 
 export default function FormDialog(props) {
 	const dispatch = useDispatch();
@@ -46,8 +48,40 @@ export default function FormDialog(props) {
 		dispatch({ type: CLOSE_DIALOG });
 		setData('');
 	};
-	const handleSubmit = () => {
-		console.log(data);
+	const [
+		createGroup
+	] = useMutation(CREATE_GROUP, {
+		onError(err) {
+			setErrors(err.graphQLErrors[0].extensions.errors);
+		},
+		onCompleted(data) {
+			dispatch({ type: ADD_CONTACT, payload: { type: 'group', contactName: data.createGroup.name } });
+			handleClose();
+		},
+		variables   : { name: data }
+	});
+	const [
+		addContact
+	] = useMutation(ADD_CONTACT_MUT, {
+		onError(err) {
+			setErrors(err.graphQLErrors[0].extensions.errors);
+		},
+		onCompleted(data) {
+			dispatch({ type: ADD_CONTACT, payload: { type: 'personal', contactName: data.addContact[0] } });
+			handleClose();
+		},
+		variables   : { id: data }
+	});
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		// console.log(data);
+		if (type === 'group') {
+			createGroup();
+		}
+		else if (type === 'personal') {
+			addContact();
+		}
+		// handleClose();
 	};
 	return (
 		<React.Fragment>
@@ -55,28 +89,30 @@ export default function FormDialog(props) {
 				<DialogTitle id="form-dialog-title">{title}</DialogTitle>
 				<DialogContent>
 					<DialogContentText>{text}</DialogContentText>
-					<TextField
-						autoFocus
-						margin="dense"
-						name="data"
-						label={label}
-						type="text"
-						fullWidth
-						onChange={handleChange}
-						helperText={errors[error]}
-						error={
+					<form id="form-id" onSubmit={handleSubmit}>
+						<TextField
+							autoFocus
+							margin="dense"
+							name="data"
+							label={label}
+							type="text"
+							fullWidth
+							onChange={handleChange}
+							helperText={errors[error]}
+							error={
 
-								errors[error] ? true :
-								false
-						}
-						value={data}
-					/>
+									errors[error] ? true :
+									false
+							}
+							value={data}
+						/>
+					</form>
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={handleClose} color="primary">
 						Cancel
 					</Button>
-					<Button onClick={handleSubmit} color="primary">
+					<Button type="submit" form="form-id" color="primary">
 						{
 							type === 'group' ? 'Create' :
 							'Add'}

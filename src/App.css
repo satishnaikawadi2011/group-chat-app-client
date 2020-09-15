@@ -62,10 +62,10 @@ body {
 
 .form {
 	display: flex;
-	flex-direction: column;
 	width: 100%;
 	position: fixed;
 	bottom: 0;
+	/* justify-content: space-between; */
 	margin-bottom: 6vh;
 	/* position: relative; */
 }
@@ -73,7 +73,7 @@ body {
 .input {
 	/* position: relative; */
 	text-indent: 40px;
-	width: 50%;
+	width: 47%;
 	margin-left: 1%;
 	padding: 20;
 	height: 50px;

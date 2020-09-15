@@ -12,6 +12,8 @@ import Messages from '../components/Messages';
 import Message from '../components/Message';
 import { useSubscription } from '@apollo/client';
 import { ADD_CONTACT, ADD_MESSAGE, DELETE_CONTACT } from '../redux/types';
+import SendIcon from '@material-ui/icons/Send';
+import Avatar from '@material-ui/core/Avatar';
 
 const useStyles = makeStyles({
 	container : {
@@ -20,6 +22,21 @@ const useStyles = makeStyles({
 		overflow : 'hidden',
 		padding  : 10,
 		margin   : '5vh 10vw 5vh 10vw'
+	},
+	sendIcon  : (props) => ({
+		height : 25,
+		width  : 25,
+		color  : 'white'
+	}),
+	sendBtn   : {
+		height          : 50,
+		width           : 50,
+		marginLeft      : 5,
+		backgroundColor : '#33cccc',
+		cursor          : 'pointer',
+		outline         : 'none',
+		border          : 'none',
+		borderRadius    : 25
 	}
 });
 
@@ -123,14 +140,14 @@ function Home(props) {
 	else {
 		messageBox = <Messages />;
 	}
-	const { isDarkTheme } = props;
+	const { isDarkTheme } = useSelector((state) => state.ui);
 	const bgInput =
 		isDarkTheme ? '#333333' :
 		'#bfbfbf';
 	const inputColor =
 		isDarkTheme ? 'white' :
 		'black';
-	const classes = useStyles();
+	const classes = useStyles({ isDarkTheme });
 	const [
 		sendMessage
 	] = useMutation(SEND_MESSAGE, {
@@ -187,6 +204,9 @@ function Home(props) {
 									value={content}
 									onChange={(e) => setContent(e.target.value)}
 								/>
+								<button className={classes.sendBtn} type="submit">
+									<SendIcon className={classes.sendIcon} />
+								</button>
 							</form>
 						</div>
 					</div>

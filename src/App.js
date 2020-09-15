@@ -10,7 +10,7 @@ import jwtDecode from 'jwt-decode';
 import { logout } from './redux/actions/user';
 import ProtectedRoute from './utils/ProtectedRoute';
 import store from './redux/store';
-import { LOGIN } from './redux/types';
+import { LOGIN, TOGGLE_THEME } from './redux/types';
 import history from './utils/history';
 
 function App() {
@@ -26,12 +26,10 @@ function App() {
 			history.push('/');
 		}
 	}
-	const [
-		darkTheme,
-		setDarkTheme
-	] = useState(false);
+	const { isDarkTheme } = store.getState().ui;
+	console.log(store.getState());
 	const palleteType =
-		darkTheme ? 'dark' :
+		isDarkTheme ? 'dark' :
 		'light';
 	const theme = createMuiTheme({
 		palette    : {
@@ -45,22 +43,17 @@ function App() {
 		}
 	});
 	const handleThemeChange = () => {
-		setDarkTheme((prevState) => !prevState);
+		store.dispatch({ type: TOGGLE_THEME });
 	};
 	return (
 		<ThemeProvider theme={theme}>
 			<CssBaseline />
 			<Router history={history} style={{ position: 'relative' }}>
 				<div style={{ position: 'absolute', top: 0, right: 0 }}>
-					<SwitchBtn style={{ position: 'absolute' }} checked={darkTheme} onChange={handleThemeChange} />
+					<SwitchBtn style={{ position: 'absolute' }} checked={isDarkTheme} onChange={handleThemeChange} />
 				</div>
 				<Switch>
-					<ProtectedRoute
-						exact
-						path="/"
-						component={(props) => <Home {...props} isDarkTheme={darkTheme} />}
-						authenticated
-					/>
+					<ProtectedRoute exact path="/" component={(props) => <Home {...props} />} authenticated />
 					<ProtectedRoute path="/login" component={Login} guest />
 					<ProtectedRoute path="/signup" component={Signup} guest />
 				</Switch>

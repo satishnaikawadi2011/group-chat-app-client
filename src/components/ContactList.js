@@ -18,10 +18,6 @@ function ContactList(props) {
 		},
 		onError     : (err) => console.log(err)
 	});
-	// ? contacts :
-	// 	props.userData.contacts;
-	// ? groups :
-	// 	props.userData.groups;
 	const { latestMessages } = useSelector((state) => state.data);
 	const { userData: { groups, contacts } } = useSelector((state) => state.user);
 	const myGroups = groups;
@@ -30,11 +26,13 @@ function ContactList(props) {
 		...myGroups,
 		...myContacts
 	];
-	if (loading) {
-		return <h1>Loading....</h1>;
+
+	let contactListmarkup;
+	if (list.length === 0) {
+		contactListmarkup = <p>You don't have any contacts or group.Add or create some!</p>;
 	}
 	else {
-		return (
+		contactListmarkup = (
 			<React.Fragment>
 				{list.map((name) => {
 					const type =
@@ -55,6 +53,12 @@ function ContactList(props) {
 				})}
 			</React.Fragment>
 		);
+	}
+	if (loading) {
+		return <h1>Loading....</h1>;
+	}
+	else {
+		return contactListmarkup;
 	}
 }
 

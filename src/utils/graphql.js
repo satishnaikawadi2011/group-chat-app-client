@@ -52,7 +52,7 @@ export const CREATE_GROUP = gql`
 	}
 `;
 
-export const ADD_CONTACT = gql`
+export const ADD_CONTACT_MUT = gql`
 	mutation addContact($id: String!) {
 		addContact(id: $id)
 	}

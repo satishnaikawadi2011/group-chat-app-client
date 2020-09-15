@@ -15,3 +15,4 @@ export const ADD_MESSAGE = 'ADD_MESSAGE';
 // TODO: ui related types (dialog boxes and menu)
 export const OPEN_DIALOG = 'OPEN_DIALOG';
 export const CLOSE_DIALOG = 'CLOSE_DIALOG';
+export const TOGGLE_THEME = 'TOGGLE_THEME';

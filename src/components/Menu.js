@@ -8,8 +8,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import { makeStyles } from '@material-ui/core/styles';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import { useDispatch } from 'react-redux';
-import { OPEN_DIALOG } from '../redux/types';
+import { useDispatch, useSelector } from 'react-redux';
+import { OPEN_DIALOG, TOGGLE_THEME } from '../redux/types';
 import { logout } from '../redux/actions/user';
 
 const useStyles = makeStyles((theme) => ({
@@ -60,7 +60,10 @@ export default function MenuListComposition() {
 	const handleLogout = () => {
 		dispatch(logout());
 	};
-
+	const toggleTheme = () => {
+		dispatch({ type: TOGGLE_THEME });
+	};
+	const isDarkTheme = useSelector((state) => state.ui);
 	const prevOpen = useRef(open);
 	useEffect(
 		() => {
@@ -103,8 +106,13 @@ export default function MenuListComposition() {
 								<ClickAwayListener onClickAway={handleClose}>
 									<MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
 										<MenuItem onClick={() => handleCreate('group')}>New Group</MenuItem>
-										<MenuItem onClick={() => handleCreate('contact')}>New Contact</MenuItem>
+										<MenuItem onClick={() => handleCreate('personal')}>New Contact</MenuItem>
 										<MenuItem onClick={() => console.log('logout')}>Profile</MenuItem>
+										<MenuItem onClick={toggleTheme}>
+											{
+												isDarkTheme ? 'Day Mode' :
+												'Night Mode'}
+										</MenuItem>
 										<MenuItem onClick={handleLogout}>Logout</MenuItem>
 									</MenuList>
 								</ClickAwayListener>
