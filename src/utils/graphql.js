@@ -95,3 +95,16 @@ export const DELETE_CONTACT_SUB = gql`
 		deleteContact
 	}
 `;
+
+export const SEND_MESSAGE = gql`
+	mutation sendMessage($to: String!, $content: String!) {
+		sendMessage(to: $to, content: $content) {
+			from
+			createdAt
+			type
+			to
+			content
+			id
+		}
+	}
+`;

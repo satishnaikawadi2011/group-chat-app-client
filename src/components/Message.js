@@ -8,14 +8,20 @@ import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles({
 	container : (props) => ({
-		width        : '40%',
-		padding      : 10,
-		margin       : 10,
-		position     : 'relative',
-		marginLeft   :
+		width           : '40%',
+		padding         : 10,
+		margin          : 10,
+		position        : 'relative',
+		marginLeft      :
 			props.byMe ? 'auto' :
 			'',
-		marginBottom : 20
+		marginBottom    : 20,
+		backgroundColor :
+			props.byMe ? '#d6f5f5' :
+			'',
+		color           :
+			props.byMe ? 'black' :
+			''
 	}),
 	from      : {
 		color : 'green'
@@ -35,8 +41,6 @@ const useStyles = makeStyles({
 		marginTop       : 10,
 		color           : 'black',
 		width           : '30%'
-
-		// display         : 'inline-block'
 	}
 });
 

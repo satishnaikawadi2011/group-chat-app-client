@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Paper from '@material-ui/core/Paper';
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import { useQuery } from '@apollo/client';
-import { DELETE_CONTACT_SUB, GET_USER, NEW_CONTACT, NEW_MESSAGE } from '../utils/graphql';
+import { useMutation, useQuery } from '@apollo/client';
+import { DELETE_CONTACT_SUB, GET_USER, NEW_CONTACT, NEW_MESSAGE, SEND_MESSAGE } from '../utils/graphql';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserData } from '../redux/actions/user';
 import ContactList from '../components/ContactList';
@@ -24,6 +24,10 @@ const useStyles = makeStyles({
 });
 
 function Home(props) {
+	const [
+		content,
+		setContent
+	] = useState('');
 	const { selectedContact } = useSelector((state) => state.data);
 	const { username } = useSelector((state) => state.user.userData);
 	const { data: msgData, error: msgError } = useSubscription(NEW_MESSAGE);
@@ -82,7 +86,6 @@ function Home(props) {
 
 			if (newCtData) {
 				const payload = newCtData.newContact;
-				// console.log('It works,delete contact');
 				dispatch({
 					type    : ADD_CONTACT,
 					payload
@@ -102,7 +105,6 @@ function Home(props) {
 
 			if (delCtData) {
 				const payload = delCtData.deleteContact;
-				// console.log('It works');
 				dispatch({
 					type    : DELETE_CONTACT,
 					payload
@@ -122,7 +124,28 @@ function Home(props) {
 		messageBox = <Messages />;
 	}
 	const { isDarkTheme } = props;
+	const bgInput =
+		isDarkTheme ? '#333333' :
+		'#bfbfbf';
+	const inputColor =
+		isDarkTheme ? 'white' :
+		'black';
 	const classes = useStyles();
+	const [
+		sendMessage
+	] = useMutation(SEND_MESSAGE, {
+		onError(err) {
+			console.log(err);
+		}
+	});
+	const submitMessage = (e) => {
+		e.preventDefault();
+		console.log(content);
+		if (content.trim() === '' || selectedContact.name === '') return;
+
+		sendMessage({ variables: { to: selectedContact.name, content } });
+		setContent('');
+	};
 	if (loading) {
 		return <h1>Loading...</h1>;
 	}
@@ -146,19 +169,25 @@ function Home(props) {
 							<ContactList userData={userData} />
 						</div>
 						<div
+							id="data"
 							style={{
-								height          : '90vh',
-								width           : 'calc(80vw - 420px)',
-								marginLeft      : '20px',
-								marginBottom    : '10px',
 								backgroundColor :
 									isDarkTheme ? '#595959' :
-									' #e6e6e6',
-								overflow        : 'auto'
+									' #e6e6e6'
 							}}
+							className="message-box"
 						>
 							{messageBox}
-							{/* <Message /> */}
+							<form className="form" onSubmit={submitMessage}>
+								<input
+									style={{ backgroundColor: bgInput, color: inputColor }}
+									type="text"
+									className="input"
+									placeholder="Type a message ...."
+									value={content}
+									onChange={(e) => setContent(e.target.value)}
+								/>
+							</form>
 						</div>
 					</div>
 				</Paper>

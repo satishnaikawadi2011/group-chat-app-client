@@ -59,3 +59,38 @@ body {
 	display: flex;
 	flex-direction: column-reverse;
 }
+
+.form {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	position: fixed;
+	bottom: 0;
+	margin-bottom: 6vh;
+	/* position: relative; */
+}
+
+.input {
+	/* position: relative; */
+	text-indent: 40px;
+	width: 50%;
+	margin-left: 1%;
+	padding: 20;
+	height: 50px;
+	border-radius: 25px;
+	outline: none;
+	border: none;
+}
+
+.message-box {
+	height: 90vh;
+	width: calc(80vw - 420px);
+	margin-left: 20px;
+	margin-bottom: 10px;
+	overflow: auto;
+	position: relative;
+	scrollbar-width: none;
+}
+.message-box::-webkit-scrollbar {
+	display: none;
+}
