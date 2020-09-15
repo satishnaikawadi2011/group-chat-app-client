@@ -51,14 +51,16 @@ function Contact(props) {
 	const handleContact = () => {
 		dispatch({ type: SELECT_CONTACT, payload: { name, type } });
 	};
-	if (getDiff(new Date(), latestMessage.createdAt) < 1) {
-		formatedDate = moment(latestMessage.createdAt).format('hh:mm a');
-	}
-	else if (getDiff(new Date(), latestMessage.createdAt) > 7) {
-		formatedDate = moment(latestMessage.createdAt).format('DD/MM/YYYY');
-	}
-	else {
-		formatedDate = moment(latestMessage.createdAt).format('dddd');
+	if (latestMessage) {
+		if (getDiff(new Date(), latestMessage.createdAt) < 1) {
+			formatedDate = moment(latestMessage.createdAt).format('hh:mm a');
+		}
+		else if (getDiff(new Date(), latestMessage.createdAt) > 7) {
+			formatedDate = moment(latestMessage.createdAt).format('DD/MM/YYYY');
+		}
+		else {
+			formatedDate = moment(latestMessage.createdAt).format('dddd');
+		}
 	}
 	return (
 		<React.Fragment>

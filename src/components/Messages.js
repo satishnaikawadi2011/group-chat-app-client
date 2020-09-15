@@ -22,6 +22,7 @@ function Messages() {
 		},
 		variables   : { otherUser: name, type }
 	});
+
 	if (loading) {
 		return <h1>{'Loading'}</h1>;
 	}

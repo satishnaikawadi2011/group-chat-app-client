@@ -70,3 +70,28 @@ export const GET_MESSAGES = gql`
 		}
 	}
 `;
+
+export const NEW_MESSAGE = gql`
+	subscription newMessage {
+		newMessage {
+			from
+			to
+			content
+			type
+			createdAt
+			id
+		}
+	}
+`;
+
+export const NEW_CONTACT = gql`
+	subscription newContact {
+		newContact
+	}
+`;
+
+export const DELETE_CONTACT_SUB = gql`
+	subscription deleteContact {
+		deleteContact
+	}
+`;

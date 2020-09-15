@@ -18,14 +18,14 @@ function ContactList(props) {
 		},
 		onError     : (err) => console.log(err)
 	});
+	// ? contacts :
+	// 	props.userData.contacts;
+	// ? groups :
+	// 	props.userData.groups;
 	const { latestMessages } = useSelector((state) => state.data);
 	const { userData: { groups, contacts } } = useSelector((state) => state.user);
-	const myGroups =
-		groups ? groups :
-		props.userData.groups;
-	const myContacts =
-		contacts ? contacts :
-		props.userData.contacts;
+	const myGroups = groups;
+	const myContacts = contacts;
 	let list = [
 		...myGroups,
 		...myContacts
