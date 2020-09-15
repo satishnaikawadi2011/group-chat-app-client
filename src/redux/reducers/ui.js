@@ -1,11 +1,12 @@
-import { CLOSE_DIALOG, OPEN_DIALOG, TOGGLE_THEME } from '../types';
+import { CLOSE_DIALOG, OPEN_DIALOG, TOGGLE_DRAWER, TOGGLE_THEME } from '../types';
 
 const initialState = {
-	dialog      : {
+	dialog       : {
 		type : '',
 		open : false
 	},
-	isDarkTheme : false
+	isDrawerOpen : false,
+	isDarkTheme  : false
 };
 
 export default function(state = initialState, action) {
@@ -32,6 +33,11 @@ export default function(state = initialState, action) {
 			return {
 				...state,
 				isDarkTheme : !state.isDarkTheme
+			};
+		case TOGGLE_DRAWER:
+			return {
+				...state,
+				isDrawerOpen : !state.isDrawerOpen
 			};
 		default:
 			return state;

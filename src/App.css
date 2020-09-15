@@ -74,7 +74,7 @@ body {
 	/* position: relative; */
 	text-indent: 40px;
 	width: 47%;
-	margin-left: 1%;
+	margin-left: 3%;
 	padding: 20;
 	height: 50px;
 	border-radius: 25px;
@@ -84,9 +84,11 @@ body {
 
 .message-box {
 	height: 90vh;
-	width: calc(80vw - 420px);
-	margin-left: 20px;
-	margin-bottom: 10px;
+	/* width: 100%; */
+	width: calc(80vw - 370px);
+	/* margin-left: 20px; */
+	/* margin-bottom: 10px; */
+	/* margin-top: 0; */
 	overflow: auto;
 	position: relative;
 	scrollbar-width: none;

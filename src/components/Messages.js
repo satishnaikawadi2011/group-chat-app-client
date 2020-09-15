@@ -4,8 +4,15 @@ import { useMutation, useQuery } from '@apollo/client';
 import { GET_MESSAGES, SEND_MESSAGE } from '../utils/graphql';
 import { ADD_MESSAGE, SET_MESSAGES } from '../redux/types';
 import Message from './Message';
+import { Avatar, Typography } from '@material-ui/core';
+import ContactMenu from '../components/ContactMenu';
+import GroupInfoDrawer from './GroupInfoDrawer';
 
 function Messages() {
+	const { isDarkTheme } = useSelector((state) => state.ui);
+	const bgBar =
+		isDarkTheme ? '#333333' :
+		'#bfbfbf';
 	const dispatch = useDispatch();
 	const [
 		loading,
@@ -36,11 +43,44 @@ function Messages() {
 	}
 	return (
 		<React.Fragment>
+			<div
+				style={{
+					height          : 50,
+					width           : 'calc(80vw - 370px)',
+					backgroundColor : bgBar,
+					position        : 'fixed',
+					zIndex          : 2,
+					display         : 'flex'
+				}}
+			>
+				<Avatar style={{ padding: 10, backgroundColor: '#33cccc', margin: 5, marginLeft: 20 }}>
+					{name[0]}
+				</Avatar>
+				<Typography
+					variant="h6"
+					style={{
+						padding : 10,
+						color   :
+							isDarkTheme ? 'white' :
+							'black'
+					}}
+				>
+					{name}
+				</Typography>
+				<ContactMenu />
+			</div>
 			<div style={{ display: 'flex', flexDirection: 'column-reverse' }}>
 				{messages.map((message, index) => {
-					if (index === 0) {
+					if (index === 0 && messages.length !== 1) {
 						return (
 							<div key={message.id} style={{ marginBottom: 60 }}>
+								<Message message={message} />
+							</div>
+						);
+					}
+					else if (index === messages.length - 1) {
+						return (
+							<div key={message.id} style={{ marginTop: 60 }}>
 								<Message message={message} />
 							</div>
 						);
@@ -48,6 +88,7 @@ function Messages() {
 					return <Message key={message.id} message={message} />;
 				})}
 			</div>
+			<GroupInfoDrawer />
 		</React.Fragment>
 	);
 }

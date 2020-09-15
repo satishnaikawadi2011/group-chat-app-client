@@ -20,7 +20,7 @@ const useStyles = makeStyles({
 		height   : '90vh',
 		width    : '80vw',
 		overflow : 'hidden',
-		padding  : 10,
+		// padding  : 10,
 		margin   : '5vh 10vw 5vh 10vw'
 	},
 	sendIcon  : (props) => ({
@@ -180,7 +180,8 @@ function Home(props) {
 								backgroundColor : `${
 									isDarkTheme ? ' #737373' :
 									'#cccccc'}`,
-								marginTop       : '40px'
+								marginTop       : '40px',
+								width           : 370
 							}}
 						>
 							<ContactList userData={userData} />

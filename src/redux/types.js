@@ -16,3 +16,4 @@ export const ADD_MESSAGE = 'ADD_MESSAGE';
 export const OPEN_DIALOG = 'OPEN_DIALOG';
 export const CLOSE_DIALOG = 'CLOSE_DIALOG';
 export const TOGGLE_THEME = 'TOGGLE_THEME';
+export const TOGGLE_DRAWER = 'TOGGLE_DRAWER';
