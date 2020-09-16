@@ -44,7 +44,7 @@ const splitLink = split(
 	httpLink
 );
 
-const client = new ApolloClient({
+export const client = new ApolloClient({
 	link  : splitLink,
 	cache : new InMemoryCache()
 });

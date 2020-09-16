@@ -42,7 +42,9 @@ export default function(state = initialState, action) {
 		case SET_MESSAGES:
 			return {
 				...state,
-				messages : action.payload
+				messages : [
+					...action.payload
+				]
 			};
 		case ADD_MESSAGE:
 			if (state.selectedContact.name === action.payload.contact) {

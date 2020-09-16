@@ -10,7 +10,7 @@ import jwtDecode from 'jwt-decode';
 import { logout } from './redux/actions/user';
 import ProtectedRoute from './utils/ProtectedRoute';
 import store from './redux/store';
-import { LOGIN, TOGGLE_THEME } from './redux/types';
+import { LOGIN } from './redux/types';
 import history from './utils/history';
 
 function App() {
@@ -47,6 +47,7 @@ function App() {
 	});
 	const handleThemeChange = () => {
 		setIsDarkTheme((prevState) => !prevState);
+		// window.location.href = '/';
 	};
 	return (
 		<ThemeProvider theme={theme}>

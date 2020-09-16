@@ -190,7 +190,7 @@ function Home(props) {
 	});
 	const submitMessage = (e) => {
 		e.preventDefault();
-		console.log(content);
+		// console.log(content);
 		if (content.trim() === '' || selectedContact.name === '') return;
 
 		sendMessage({ variables: { to: selectedContact.name, content } });
