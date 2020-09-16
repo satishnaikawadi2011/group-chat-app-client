@@ -14,33 +14,61 @@ import { useSubscription } from '@apollo/client';
 import { ADD_CONTACT, ADD_MESSAGE, DELETE_CONTACT } from '../redux/types';
 import SendIcon from '@material-ui/icons/Send';
 import Avatar from '@material-ui/core/Avatar';
+import { CircularProgress, Typography, useTheme } from '@material-ui/core';
+import AppIcon from '../images/logo.svg';
 
 const useStyles = makeStyles({
-	container : {
+	container   : {
 		height   : '90vh',
 		width    : '80vw',
 		overflow : 'hidden',
-		// padding  : 10,
 		margin   : '5vh 10vw 5vh 10vw'
 	},
-	sendIcon  : (props) => ({
+	sendIcon    : (props) => ({
 		height : 25,
 		width  : 25,
 		color  : 'white'
 	}),
-	sendBtn   : {
+	sendBtn     : {
 		height          : 50,
 		width           : 50,
 		marginLeft      : 5,
+		marginTop       : 10,
 		backgroundColor : '#33cccc',
 		cursor          : 'pointer',
 		outline         : 'none',
 		border          : 'none',
 		borderRadius    : 25
+	},
+	loader      : {
+		height         : '100vh',
+		width          : '100vw',
+		display        : 'flex',
+		justifyContent : 'center',
+		alignItems     : 'center'
+	},
+	fallbackBox : {
+		display        : 'flex',
+		flexDirection  : 'column',
+		justifyContent : 'center',
+		alignItems     : 'center',
+		heigth         : '90vh',
+		marginTop      : '30vh',
+		width          : '100%'
+	},
+	img         : { textAlign: 'center', height: 200, width: 200, marginBottom: 20 },
+	contactList : {
+		overflow  : 'auto',
+		height    : '90vh',
+		marginTop : '40px',
+		// width     : 370
+		width     : 'calc(80vw/3.3)'
 	}
 });
 
 function Home(props) {
+	const theme = useTheme();
+	const classes = useStyles();
 	const [
 		content,
 		setContent
@@ -134,20 +162,22 @@ function Home(props) {
 		]
 	);
 	let messageBox;
-	if (selectedContact === '') {
-		messageBox = <p>Please select a contact or group to chat with them !</p>;
+	if (selectedContact.name === '') {
+		messageBox = (
+			<div className={classes.fallbackBox}>
+				<img src={AppIcon} className={classes.img} />
+				<Typography variant="h5">Please select a contact or group to chat with them !</Typography>
+			</div>
+		);
 	}
 	else {
 		messageBox = <Messages />;
 	}
-	const { isDarkTheme } = useSelector((state) => state.ui);
-	const bgInput =
-		isDarkTheme ? '#333333' :
-		'#bfbfbf';
+	const bgInput = theme.palette.action.selected;
 	const inputColor =
-		isDarkTheme ? 'white' :
-		'black';
-	const classes = useStyles({ isDarkTheme });
+
+			theme.palette.text.primary === '#fff' ? 'white' :
+			'black';
 	const [
 		sendMessage
 	] = useMutation(SEND_MESSAGE, {
@@ -164,7 +194,11 @@ function Home(props) {
 		setContent('');
 	};
 	if (loading) {
-		return <h1>Loading...</h1>;
+		return (
+			<div className={classes.loader}>
+				<div className="loader">Loading...</div>
+			</div>
+		);
 	}
 	else {
 		return (
@@ -173,32 +207,24 @@ function Home(props) {
 				<Paper className={classes.container}>
 					<Menu />
 					<div style={{ display: 'flex' }}>
-						<div
-							style={{
-								overflow        : 'auto',
-								height          : '90vh',
-								backgroundColor : `${
-									isDarkTheme ? ' #737373' :
-									'#cccccc'}`,
-								marginTop       : '40px',
-								width           : 370
-							}}
-						>
+						<div className={classes.contactList} style={{ backgroundColor: theme.palette.action.disabled }}>
 							<ContactList userData={userData} />
 						</div>
 						<div
 							id="data"
 							style={{
-								backgroundColor :
-									isDarkTheme ? '#595959' :
-									' #e6e6e6'
+								backgroundColor : theme.palette.divider
 							}}
 							className="message-box"
 						>
 							{messageBox}
-							<form className="form" onSubmit={submitMessage}>
+							<form
+								className="form"
+								style={{ backgroundColor: theme.palette.background.default }}
+								onSubmit={submitMessage}
+							>
 								<input
-									style={{ backgroundColor: bgInput, color: inputColor }}
+									style={{ backgroundColor: bgInput, color: inputColor, zIndex: 3 }}
 									type="text"
 									className="input"
 									placeholder="Type a message ...."

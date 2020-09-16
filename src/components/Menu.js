@@ -14,11 +14,12 @@ import { logout } from '../redux/actions/user';
 
 const useStyles = makeStyles((theme) => ({
 	root  : {
-		display  : 'flex',
-		position : 'absolute',
-		zIndex   : 3,
-		cursor   : 'pointer',
-		left     : 500
+		display   : 'flex',
+		position  : 'absolute',
+		zIndex    : 3,
+		cursor    : 'pointer',
+		left      : 500,
+		marginTop : 10
 	},
 	paper : {
 		marginRight : theme.spacing(2)
@@ -60,10 +61,6 @@ export default function MenuListComposition() {
 	const handleLogout = () => {
 		dispatch(logout());
 	};
-	const toggleTheme = () => {
-		dispatch({ type: TOGGLE_THEME });
-	};
-	const isDarkTheme = useSelector((state) => state.ui);
 	const prevOpen = useRef(open);
 	useEffect(
 		() => {
@@ -108,11 +105,6 @@ export default function MenuListComposition() {
 										<MenuItem onClick={() => handleCreate('group')}>New Group</MenuItem>
 										<MenuItem onClick={() => handleCreate('personal')}>New Contact</MenuItem>
 										<MenuItem onClick={() => console.log('logout')}>Profile</MenuItem>
-										<MenuItem onClick={toggleTheme}>
-											{
-												isDarkTheme ? 'Day Mode' :
-												'Night Mode'}
-										</MenuItem>
 										<MenuItem onClick={handleLogout}>Logout</MenuItem>
 									</MenuList>
 								</ClickAwayListener>

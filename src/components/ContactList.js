@@ -1,11 +1,41 @@
 import { useQuery } from '@apollo/client';
+import { makeStyles, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SET_LATEST_MESSAGES } from '../redux/types';
 import { GET_LATEST_MESSAGES } from '../utils/graphql';
 import Contact from './Contact';
+import ContactIcon from '../images/no-contacts.svg';
+
+const useStyles = makeStyles({
+	loader            : {
+		height         : '90vh',
+		width          : 'calc(80vw/3.3)',
+		display        : 'flex',
+		justifyContent : 'center',
+		alignItems     : 'center'
+	},
+	fallbackText      : {
+		margin    : 'auto 10px auto 10px',
+		textAlign : 'center'
+	},
+	fallbackIcon      : {
+		height    : 100,
+		width     : 100,
+		marginTop : 'calc(90vh/3)'
+	},
+	fallbackContainer : {
+		height         : '90vh',
+		width          : 'calc(80vw/3.3)',
+		display        : 'flex',
+		flexDirection  : 'column',
+		justifyContent : 'center',
+		alignItems     : 'center'
+	}
+});
 
 function ContactList(props) {
+	const classes = useStyles();
 	const [
 		loading,
 		setLoading
@@ -29,7 +59,14 @@ function ContactList(props) {
 
 	let contactListmarkup;
 	if (list.length === 0) {
-		contactListmarkup = <p>You don't have any contacts or group.Add or create some!</p>;
+		contactListmarkup = (
+			<div className={classes.fallbackContainer}>
+				<img src={ContactIcon} className={classes.fallbackIcon} />
+				<Typography className={classes.fallbackText} variant="h6">
+					You don't have any contacts or groups.Create some groups or add new contacts
+				</Typography>
+			</div>
+		);
 	}
 	else {
 		contactListmarkup = (
@@ -55,7 +92,11 @@ function ContactList(props) {
 		);
 	}
 	if (loading) {
-		return <h1>Loading....</h1>;
+		return (
+			<div className={classes.loader}>
+				<div className="loader" />
+			</div>
+		);
 	}
 	else {
 		return contactListmarkup;

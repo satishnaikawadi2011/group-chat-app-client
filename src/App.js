@@ -14,6 +14,10 @@ import { LOGIN, TOGGLE_THEME } from './redux/types';
 import history from './utils/history';
 
 function App() {
+	const [
+		isDarkTheme,
+		setIsDarkTheme
+	] = useState(false);
 	const token = localStorage.getItem('token');
 	if (token) {
 		const decodedToken = jwtDecode(token);
@@ -26,8 +30,7 @@ function App() {
 			history.push('/');
 		}
 	}
-	const { isDarkTheme } = store.getState().ui;
-	// console.log(store.getState());
+
 	const palleteType =
 		isDarkTheme ? 'dark' :
 		'light';
@@ -43,7 +46,7 @@ function App() {
 		}
 	});
 	const handleThemeChange = () => {
-		store.dispatch({ type: TOGGLE_THEME });
+		setIsDarkTheme((prevState) => !prevState);
 	};
 	return (
 		<ThemeProvider theme={theme}>

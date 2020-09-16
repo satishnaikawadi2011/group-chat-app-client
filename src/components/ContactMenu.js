@@ -99,11 +99,6 @@ export default function MenuListComposition() {
 		<div className={classes.root}>
 			<div>
 				<MoreVertIcon
-					style={{
-						color :
-							isDarkTheme ? 'white' :
-							'black'
-					}}
 					ref={anchorRef}
 					aria-controls={
 

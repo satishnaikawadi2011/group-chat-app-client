@@ -47,6 +47,13 @@ const useStyles = makeStyles((theme) => ({
 		padding        : theme.spacing(0, 1),
 		...theme.mixins.toolbar,
 		justifyContent : 'flex-start'
+	},
+	loader       : {
+		height         : '100%',
+		width          : '100%',
+		display        : 'flex',
+		alignItems     : 'center',
+		justifyContent : 'center'
 	}
 }));
 
@@ -78,8 +85,8 @@ export default function PersistentDrawerRight({ name }) {
 			console.log(err);
 		},
 		onCompleted(data) {
-			// console.log(data.removeMember);
 			dispatch({ type: REMOVE_MEMBER, payload: data.removeMember });
+			setLoading(false);
 		}
 	});
 	const [
@@ -92,6 +99,7 @@ export default function PersistentDrawerRight({ name }) {
 			dispatch({ type: DELETE_CONTACT, payload: { name: group.name, type: 'group' } });
 			dispatch({ type: SELECT_CONTACT, payload: { type: '', name: '' } });
 			dispatch({ type: TOGGLE_DRAWER });
+			setLoading(false);
 		}
 	});
 	const [
@@ -104,15 +112,19 @@ export default function PersistentDrawerRight({ name }) {
 			dispatch({ type: DELETE_CONTACT, payload: { name: group.name, type: 'group' } });
 			dispatch({ type: SELECT_CONTACT, payload: { type: '', name: '' } });
 			dispatch({ type: TOGGLE_DRAWER });
+			setLoading(false);
 		}
 	});
 	const handleDeleteGroup = () => {
+		setLoading(true);
 		deleteGroup({ variables: { id: group.id } });
 	};
 	const handleExitGroup = () => {
+		setLoading(true);
 		leftGroup({ variables: { groupName: group.name } });
 	};
 	const handleRemoveMember = (membername) => {
+		setLoading(true);
 		removeMember({ variables: { otherUsername: membername, groupName: group.name } });
 	};
 	const handleDrawerClose = () => {
@@ -201,7 +213,7 @@ export default function PersistentDrawerRight({ name }) {
 							<IconButton onClick={handleDeleteGroup}>
 								<DeleteIcon color="error" fontSize="large" />
 							</IconButton>
-							<Typography variant="h6" style={{ color: 'red', marginLeft: 20, marginBottom: 20 }}>
+							<Typography variant="h6" style={{ color: 'red', margin: 20 }}>
 								Delete Group
 							</Typography>
 						</div>
@@ -219,7 +231,7 @@ export default function PersistentDrawerRight({ name }) {
 							<IconButton onClick={handleExitGroup}>
 								<ExitToAppIcon color="error" fontSize="large" />
 							</IconButton>
-							<Typography variant="h6" style={{ color: 'red', marginLeft: 20, marginBottom: 20 }}>
+							<Typography variant="h6" style={{ color: 'red', margin: 20 }}>
 								Exit Group
 							</Typography>
 						</div>
@@ -229,7 +241,11 @@ export default function PersistentDrawerRight({ name }) {
 		);
 	}
 	else {
-		dataDependentUI = <CircularProgress size="large" />;
+		dataDependentUI = (
+			<div className={classes.loader}>
+				<div className="loader" />
+			</div>
+		);
 	}
 	return (
 		<div className={classes.root}>

@@ -1,18 +1,28 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
-import { GET_MESSAGES, SEND_MESSAGE } from '../utils/graphql';
-import { ADD_MESSAGE, SET_MESSAGES } from '../redux/types';
+import { useLazyQuery } from '@apollo/client';
+import { GET_MESSAGES } from '../utils/graphql';
+import { SET_MESSAGES } from '../redux/types';
 import Message from './Message';
-import { Avatar, Typography } from '@material-ui/core';
+import { Avatar, makeStyles, Typography } from '@material-ui/core';
 import ContactMenu from '../components/ContactMenu';
 import GroupInfoDrawer from './GroupInfoDrawer';
+import { useTheme } from '@material-ui/core';
+
+const useStyles = makeStyles({
+	loader : {
+		height         : '90vh',
+		width          : '100%',
+		display        : 'flex',
+		justifyContent : 'center',
+		alignItems     : 'center'
+	}
+});
 
 function Messages() {
-	const { isDarkTheme } = useSelector((state) => state.ui);
-	const bgBar =
-		isDarkTheme ? '#333333' :
-		'#bfbfbf';
+	const classes = useStyles();
+	const theme = useTheme();
+	const bgBar = theme.palette.background.default;
 	const dispatch = useDispatch();
 	const [
 		loading,
@@ -51,14 +61,18 @@ function Messages() {
 		]
 	);
 	if (loading) {
-		return <h1>{'Loading'}</h1>;
+		return (
+			<div className={classes.loader}>
+				<div className="loader">Loading...</div>
+			</div>
+		);
 	}
 	return (
 		<React.Fragment>
 			<div
 				style={{
 					height          : 50,
-					width           : 'calc(80vw - 370px)',
+					width           : 'calc(80vw - (80vw/3.3))',
 					backgroundColor : bgBar,
 					position        : 'fixed',
 					zIndex          : 2,
@@ -71,10 +85,7 @@ function Messages() {
 				<Typography
 					variant="h6"
 					style={{
-						padding : 10,
-						color   :
-							isDarkTheme ? 'white' :
-							'black'
+						padding : 10
 					}}
 				>
 					{name}
