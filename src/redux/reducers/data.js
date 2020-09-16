@@ -1,4 +1,12 @@
-import { ADD_MESSAGE, SELECT_CONTACT, SET_LATEST_MESSAGES, SET_MESSAGES } from '../types';
+import {
+	ADD_MEMBER,
+	ADD_MESSAGE,
+	REMOVE_MEMBER,
+	SELECT_CONTACT,
+	SET_GROUP,
+	SET_LATEST_MESSAGES,
+	SET_MESSAGES
+} from '../types';
 
 const initialState = {
 	latestMessages  : {},
@@ -6,7 +14,8 @@ const initialState = {
 	selectedContact : {
 		type : '',
 		name : ''
-	}
+	},
+	group           : {}
 };
 
 export default function(state = initialState, action) {
@@ -58,6 +67,30 @@ export default function(state = initialState, action) {
 					}
 				};
 			}
+		case SET_GROUP:
+			return {
+				...state,
+				group : action.payload
+			};
+		case ADD_MEMBER:
+			return {
+				...state,
+				group : {
+					...state.group,
+					members : [
+						...state.group.members,
+						{ username: action.payload }
+					]
+				}
+			};
+		case REMOVE_MEMBER:
+			return {
+				...state,
+				group : {
+					...state.group,
+					members : state.group.members.filter((m) => m.username !== action.payload)
+				}
+			};
 		default:
 			return state;
 	}

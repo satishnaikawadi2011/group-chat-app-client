@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
@@ -11,14 +11,16 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { useDispatch, useSelector } from 'react-redux';
-import { TOGGLE_DRAWER } from '../redux/types';
-import { Avatar, ListItemAvatar, ListItemSecondaryAction } from '@material-ui/core';
+import { DELETE_CONTACT, OPEN_DIALOG, REMOVE_MEMBER, SELECT_CONTACT, SET_GROUP, TOGGLE_DRAWER } from '../redux/types';
+import { Avatar, CircularProgress, ListItemAvatar, ListItemSecondaryAction } from '@material-ui/core';
 import moment from 'moment';
 import CreateIcon from '@material-ui/icons/Create';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import PersonIcon from '@material-ui/icons/Person';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { useMutation, useQuery } from '@apollo/client';
+import { DELETE_GROUP_MUT, GET_GROUP, LEFT_GROUP_MUT, REMOVE_MEMBER_MUT } from '../utils/graphql';
 
 const drawerWidth = 400;
 
@@ -48,62 +50,81 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function PersistentDrawerRight() {
+export default function PersistentDrawerRight({ name }) {
 	const { isDrawerOpen } = useSelector((state) => state.ui);
 	const { username } = useSelector((state) => state.user.userData);
+	const { group } = useSelector((state) => state.data);
+	const [
+		loading,
+		setLoading
+	] = useState(true);
 	const dispatch = useDispatch();
 	const classes = useStyles();
 	const theme = useTheme();
-	const group = {
-		name      : 'Apu1',
-		admin     : 'apu',
-		createdAt : '2020-09-15T20:20:56.652Z',
-		members   : [
-			{
-				username : 'apu'
-			}
-		],
-		id        : '5f612228ba7ef15d288ff4c6'
+	useQuery(GET_GROUP, {
+		onError(err) {
+			console.log(err);
+		},
+		onCompleted(data) {
+			dispatch({ type: SET_GROUP, payload: data.getGroup });
+			setLoading(false);
+		},
+		variables   : { name }
+	});
+	const [
+		removeMember
+	] = useMutation(REMOVE_MEMBER_MUT, {
+		onError(err) {
+			console.log(err);
+		},
+		onCompleted(data) {
+			// console.log(data.removeMember);
+			dispatch({ type: REMOVE_MEMBER, payload: data.removeMember });
+		}
+	});
+	const [
+		leftGroup
+	] = useMutation(LEFT_GROUP_MUT, {
+		onError(err) {
+			console.log(err);
+		},
+		onCompleted(data) {
+			dispatch({ type: DELETE_CONTACT, payload: { name: group.name, type: 'group' } });
+			dispatch({ type: SELECT_CONTACT, payload: { type: '', name: '' } });
+			dispatch({ type: TOGGLE_DRAWER });
+		}
+	});
+	const [
+		deleteGroup
+	] = useMutation(DELETE_GROUP_MUT, {
+		onError(err) {
+			console.log(err);
+		},
+		onCompleted(data) {
+			dispatch({ type: DELETE_CONTACT, payload: { name: group.name, type: 'group' } });
+			dispatch({ type: SELECT_CONTACT, payload: { type: '', name: '' } });
+			dispatch({ type: TOGGLE_DRAWER });
+		}
+	});
+	const handleDeleteGroup = () => {
+		deleteGroup({ variables: { id: group.id } });
 	};
-	const handleDrawerOpen = () => {
-		dispatch({ type: TOGGLE_DRAWER });
+	const handleExitGroup = () => {
+		leftGroup({ variables: { groupName: group.name } });
 	};
-
+	const handleRemoveMember = (membername) => {
+		removeMember({ variables: { otherUsername: membername, groupName: group.name } });
+	};
 	const handleDrawerClose = () => {
 		dispatch({ type: TOGGLE_DRAWER });
 	};
-
-	return (
-		<div className={classes.root}>
-			<Drawer
-				className={classes.drawer}
-				anchor="right"
-				open={isDrawerOpen}
-				classes={{
-					paper : classes.drawerPaper
-				}}
-			>
-				<div className={classes.drawerHeader}>
-					<IconButton onClick={handleDrawerClose}>
-						{
-							theme.direction === 'rtl' ? <ChevronLeftIcon /> :
-							<ChevronRightIcon />}
-					</IconButton>
-					<Typography variant="h5">Group Info</Typography>
-				</div>
-				<Divider />
-				<Avatar
-					style={{
-						backgroundColor : '#33cccc',
-						height          : 150,
-						width           : 150,
-						fontSize        : 50,
-						textAlign       : 'center',
-						margin          : '20px auto 20px auto'
-					}}
-				>
-					{group.name[0]}
-				</Avatar>
+	const handleAddMember = () => {
+		dispatch({ type: OPEN_DIALOG, payload: { type: 'personal', member: true } });
+	};
+	let dataDependentUI;
+	if (!loading) {
+		dataDependentUI = (
+			<React.Fragment>
 				<Divider />
 				<div style={{ display: 'flex', justifyContent: 'space-around', margin: '10px auto 10px auto' }}>
 					{' '}
@@ -117,8 +138,10 @@ export default function PersistentDrawerRight() {
 					<React.Fragment>
 						<div style={{ display: 'flex', justifyContent: 'space-around', margin: '10px auto 10px auto' }}>
 							{' '}
-							<PersonAddIcon style={{ cursor: 'pointer' }} />{' '}
-							<Typography style={{ marginLeft: 20, cursor: 'pointer' }} variant="h6">
+							<IconButton onClick={handleAddMember}>
+								<PersonAddIcon />{' '}
+							</IconButton>
+							<Typography style={{ marginLeft: 20, marginTop: 10 }} variant="h6">
 								Add Member
 							</Typography>
 						</div>
@@ -149,7 +172,11 @@ export default function PersistentDrawerRight() {
 									{
 										member.username !== group.admin ? username ===
 										group.admin ? <ListItemSecondaryAction>
-											<IconButton edge="end" aria-label="delete">
+											<IconButton
+												edge="end"
+												aria-label="delete"
+												onClick={() => handleRemoveMember(member.username)}
+											>
 												<DeleteIcon />
 											</IconButton>
 										</ListItemSecondaryAction> :
@@ -170,11 +197,11 @@ export default function PersistentDrawerRight() {
 								margin         : '10px auto 10px auto'
 							}}
 						>
-							<DeleteIcon color="error" fontSize="large" style={{ cursor: 'pointer' }} />
-							<Typography
-								variant="h6"
-								style={{ color: 'red', marginLeft: 20, cursor: 'pointer', marginBottom: 20 }}
-							>
+							{' '}
+							<IconButton onClick={handleDeleteGroup}>
+								<DeleteIcon color="error" fontSize="large" />
+							</IconButton>
+							<Typography variant="h6" style={{ color: 'red', marginLeft: 20, marginBottom: 20 }}>
 								Delete Group
 							</Typography>
 						</div>
@@ -188,16 +215,59 @@ export default function PersistentDrawerRight() {
 								margin         : '10px auto 10px auto'
 							}}
 						>
-							<ExitToAppIcon color="error" fontSize="large" style={{ cursor: 'pointer' }} />
-							<Typography
-								variant="h6"
-								style={{ color: 'red', marginLeft: 20, cursor: 'pointer', marginBottom: 20 }}
-							>
+							{' '}
+							<IconButton onClick={handleExitGroup}>
+								<ExitToAppIcon color="error" fontSize="large" />
+							</IconButton>
+							<Typography variant="h6" style={{ color: 'red', marginLeft: 20, marginBottom: 20 }}>
 								Exit Group
 							</Typography>
 						</div>
 						<Divider />
 					</React.Fragment>}
+			</React.Fragment>
+		);
+	}
+	else {
+		dataDependentUI = <CircularProgress size="large" />;
+	}
+	return (
+		<div className={classes.root}>
+			<Drawer
+				className={classes.drawer}
+				anchor="right"
+				open={isDrawerOpen}
+				classes={{
+					paper : classes.drawerPaper
+				}}
+			>
+				<div className={classes.drawerHeader}>
+					<IconButton onClick={handleDrawerClose}>
+						{
+							theme.direction === 'rtl' ? <ChevronLeftIcon /> :
+							<ChevronRightIcon />}
+					</IconButton>
+					<Typography variant="h5">Group Info</Typography>
+				</div>
+				<Divider />
+				<Avatar
+					style={{
+						backgroundColor : '#33cccc',
+						height          : 150,
+						width           : 150,
+						fontSize        : 50,
+						textAlign       : 'center',
+						margin          : '20px auto 20px auto'
+					}}
+				>
+					{name[0]}
+				</Avatar>
+				<Divider />
+				<Typography
+					variant="h5"
+					style={{ textAlign: 'center', margin: '10px auto 10px auto' }}
+				>{`Group Name : ${name}`}</Typography>
+				{dataDependentUI}
 			</Drawer>
 		</div>
 	);

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useMutation, useQuery } from '@apollo/client';
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import { GET_MESSAGES, SEND_MESSAGE } from '../utils/graphql';
 import { ADD_MESSAGE, SET_MESSAGES } from '../redux/types';
 import Message from './Message';
@@ -19,7 +19,9 @@ function Messages() {
 		setLoading
 	] = useState(true);
 	const { messages, selectedContact: { name, type } } = useSelector((state) => state.data);
-	useQuery(GET_MESSAGES, {
+	const [
+		getMessages
+	] = useLazyQuery(GET_MESSAGES, {
 		onCompleted(data) {
 			dispatch({ type: SET_MESSAGES, payload: data.getMessages });
 			setLoading(false);
@@ -36,6 +38,16 @@ function Messages() {
 		},
 		[
 			messages
+		]
+	);
+	useEffect(
+		() => {
+			if (name !== '') {
+				getMessages();
+			}
+		},
+		[
+			name
 		]
 	);
 	if (loading) {
@@ -88,7 +100,7 @@ function Messages() {
 					return <Message key={message.id} message={message} />;
 				})}
 			</div>
-			<GroupInfoDrawer />
+			{type === 'group' && <GroupInfoDrawer name={name} />}
 		</React.Fragment>
 	);
 }

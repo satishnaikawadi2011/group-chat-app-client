@@ -54,7 +54,7 @@ export default function MenuListComposition() {
 	}
 
 	const handleCreate = (type) => {
-		dispatch({ type: OPEN_DIALOG, payload: type });
+		dispatch({ type: OPEN_DIALOG, payload: { type } });
 	};
 
 	const handleLogout = () => {

@@ -108,3 +108,43 @@ export const SEND_MESSAGE = gql`
 		}
 	}
 `;
+
+export const GET_GROUP = gql`
+	query getGroup($name: String!) {
+		getGroup(name: $name) {
+			name
+			admin
+			createdAt
+			members {
+				username
+			}
+			id
+		}
+	}
+`;
+
+export const ADD_MEMBER_MUT = gql`
+	mutation addMember($userId: String!, $groupName: String!) {
+		addMember(userId: $userId, groupName: $groupName) {
+			username
+		}
+	}
+`;
+
+export const REMOVE_MEMBER_MUT = gql`
+	mutation removeMember($otherUsername: String!, $groupName: String!) {
+		removeMember(otherUsername: $otherUsername, groupName: $groupName)
+	}
+`;
+
+export const LEFT_GROUP_MUT = gql`
+	mutation leftGroup($groupName: String!) {
+		leftGroup(groupName: $groupName)
+	}
+`;
+
+export const DELETE_GROUP_MUT = gql`
+	mutation deleteGroup($id: String!) {
+		deleteGroup(id: $id)
+	}
+`;

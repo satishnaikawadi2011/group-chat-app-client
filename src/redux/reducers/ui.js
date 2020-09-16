@@ -2,8 +2,9 @@ import { CLOSE_DIALOG, OPEN_DIALOG, TOGGLE_DRAWER, TOGGLE_THEME } from '../types
 
 const initialState = {
 	dialog       : {
-		type : '',
-		open : false
+		type   : '',
+		open   : false,
+		member : null
 	},
 	isDrawerOpen : false,
 	isDarkTheme  : false
@@ -16,8 +17,11 @@ export default function(state = initialState, action) {
 				...state,
 				dialog : {
 					...state.dialog,
-					type : action.payload,
-					open : true
+					type   : action.payload.type,
+					open   : true,
+					member :
+						action.payload.member ? action.payload.member :
+						null
 				}
 			};
 		case CLOSE_DIALOG:
@@ -25,8 +29,9 @@ export default function(state = initialState, action) {
 				...state,
 				dialog : {
 					...state.dialog,
-					type : '',
-					open : false
+					type   : '',
+					open   : false,
+					member : null
 				}
 			};
 		case TOGGLE_THEME:

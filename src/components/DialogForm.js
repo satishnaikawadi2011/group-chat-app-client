@@ -7,13 +7,15 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { useDispatch, useSelector } from 'react-redux';
-import { ADD_CONTACT, CLOSE_DIALOG } from '../redux/types';
+import { ADD_CONTACT, ADD_MEMBER, CLOSE_DIALOG } from '../redux/types';
 import { useMutation } from '@apollo/client';
-import { CREATE_GROUP, ADD_CONTACT_MUT } from '../utils/graphql';
+import { CREATE_GROUP, ADD_CONTACT_MUT, ADD_MEMBER_MUT } from '../utils/graphql';
 
 export default function FormDialog(props) {
+	let title, text;
 	const dispatch = useDispatch();
-	const { type, open } = useSelector((state) => state.ui.dialog);
+	const { type, open, member } = useSelector((state) => state.ui.dialog);
+	const { name } = useSelector((state) => state.data.group);
 	const [
 		data,
 		setData
@@ -22,15 +24,27 @@ export default function FormDialog(props) {
 		errors,
 		setErrors
 	] = useState({});
-	const title =
+	if (!member) {
+		title =
 
-			type === 'group' ? 'Create a new group !' :
-			'Add a new contact to your contacts !';
-	const text =
+				type === 'group' ? 'Create a new group !' :
+				'Add a new contact to your contacts !';
+	}
+	else {
+		title = 'Add a new member to group !';
+	}
 
-			type ===
-			'group' ? `To create a new group, please enter unique group-name here. Then by selecting group add members to it.` :
-			`To add a new contact, please enter unique userId of other user here. Then by selecting contact chat with them.`;
+	if (!member) {
+		text =
+
+				type ===
+				'group' ? `To create a new group, please enter unique group-name here. Then by selecting group add members to it.` :
+				`To add a new contact, please enter unique userId of other user here. Then by selecting contact chat with them.`;
+	}
+	else {
+		text = `To add a new member to this group, please enter unique userId of the user here.`;
+	}
+
 	const label =
 
 			type === 'group' ? 'Group Name' :
@@ -72,16 +86,30 @@ export default function FormDialog(props) {
 		},
 		variables   : { id: data }
 	});
+	const [
+		addMember
+	] = useMutation(ADD_MEMBER_MUT, {
+		onError(err) {
+			setErrors(err.graphQLErrors[0].extensions.errors);
+		},
+		onCompleted(data) {
+			dispatch({ type: ADD_MEMBER, payload: data.addMember[1].username });
+			handleClose();
+		},
+		variables   : { userId: data, groupName: name }
+	});
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		// console.log(data);
 		if (type === 'group') {
 			createGroup();
 		}
-		else if (type === 'personal') {
+		else if (type === 'personal' && !member) {
 			addContact();
 		}
-		// handleClose();
+		else {
+			addMember();
+		}
 	};
 	return (
 		<React.Fragment>

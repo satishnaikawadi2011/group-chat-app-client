@@ -27,7 +27,7 @@ function App() {
 		}
 	}
 	const { isDarkTheme } = store.getState().ui;
-	console.log(store.getState());
+	// console.log(store.getState());
 	const palleteType =
 		isDarkTheme ? 'dark' :
 		'light';
