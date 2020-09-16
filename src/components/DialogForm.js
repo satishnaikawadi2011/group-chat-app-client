@@ -83,6 +83,7 @@ export default function FormDialog(props) {
 	] = useMutation(CREATE_GROUP, {
 		onError(err) {
 			setErrors(err.graphQLErrors[0].extensions.errors);
+			setLoading(false);
 		},
 		onCompleted(data) {
 			dispatch({ type: ADD_CONTACT, payload: { type: 'group', contactName: data.createGroup.name } });
@@ -96,6 +97,7 @@ export default function FormDialog(props) {
 	] = useMutation(ADD_CONTACT_MUT, {
 		onError(err) {
 			setErrors(err.graphQLErrors[0].extensions.errors);
+			setLoading(false);
 		},
 		onCompleted(data) {
 			dispatch({ type: ADD_CONTACT, payload: { type: 'personal', contactName: data.addContact[0] } });
@@ -109,6 +111,7 @@ export default function FormDialog(props) {
 	] = useMutation(ADD_MEMBER_MUT, {
 		onError(err) {
 			setErrors(err.graphQLErrors[0].extensions.errors);
+			setLoading(false);
 		},
 		onCompleted(data) {
 			dispatch({ type: ADD_MEMBER, payload: data.addMember[data.addMember.length - 1].username });

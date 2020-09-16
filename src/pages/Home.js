@@ -152,7 +152,10 @@ function Home(props) {
 				const payload = delCtData.deleteContact;
 				dispatch({
 					type    : DELETE_CONTACT,
-					payload
+					payload :
+
+							payload.type !== 'personal' ? { name: payload.name, type: 'group' } :
+							payload
 				});
 			}
 		},
