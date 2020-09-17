@@ -154,3 +154,37 @@ export const REMOVE_CONTACT_MUT = gql`
 		removeContact(username: $username)
 	}
 `;
+
+export const GET_NOTIFICATIONS = gql`
+	query getNotifications {
+		getNotifications {
+			read
+			content
+			id
+			type
+			sender
+			recepient
+			createdAt
+		}
+	}
+`;
+
+export const NEW_NOTIFICATION = gql`
+	subscription newNotification {
+		newNotification {
+			id
+			type
+			sender
+			recepient
+			createdAt
+			read
+			content
+		}
+	}
+`;
+
+export const MARK_NOTIFICATIONS_AS_READ = gql`
+	mutation markNotificationsAsRead($ids: [String]!) {
+		markNotificationsAsRead(ids: $ids)
+	}
+`;

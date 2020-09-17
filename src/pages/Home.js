@@ -2,7 +2,16 @@ import React, { useEffect, useState } from 'react';
 import Paper from '@material-ui/core/Paper';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { useMutation, useQuery } from '@apollo/client';
-import { DELETE_CONTACT_SUB, GET_MESSAGES, GET_USER, NEW_CONTACT, NEW_MESSAGE, SEND_MESSAGE } from '../utils/graphql';
+import {
+	DELETE_CONTACT_SUB,
+	GET_MESSAGES,
+	GET_NOTIFICATIONS,
+	GET_USER,
+	NEW_CONTACT,
+	NEW_MESSAGE,
+	NEW_NOTIFICATION,
+	SEND_MESSAGE
+} from '../utils/graphql';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserData } from '../redux/actions/user';
 import ContactList from '../components/ContactList';
@@ -11,13 +20,23 @@ import DialogForm from '../components/DialogForm';
 import Messages from '../components/Messages';
 import Message from '../components/Message';
 import { useSubscription } from '@apollo/client';
-import { ADD_CONTACT, ADD_MESSAGE, DELETE_CONTACT, SELECT_CONTACT, SET_MESSAGES } from '../redux/types';
+import {
+	ADD_CONTACT,
+	ADD_MESSAGE,
+	ADD_NOTIFICATION,
+	DELETE_CONTACT,
+	OPEN_NOT_DIALOG,
+	SELECT_CONTACT,
+	SET_MESSAGES,
+	SET_NOTIFICATIONS
+} from '../redux/types';
 import SendIcon from '@material-ui/icons/Send';
 import Avatar from '@material-ui/core/Avatar';
 import { CircularProgress, Typography, useTheme } from '@material-ui/core';
 import AppIcon from '../images/logo.svg';
 import { client } from '../utils/ApolloProvider';
 import GroupInfoDrawer from '../components/GroupInfoDrawer';
+import FABIcon from '../components/FABIcon';
 
 const useStyles = makeStyles({
 	container   : {
@@ -84,8 +103,20 @@ function Home(props) {
 	const { username } = useSelector((state) => state.user.userData);
 	const { data: msgData, error: msgError } = useSubscription(NEW_MESSAGE);
 	const { data: newCtData, error: newCtError } = useSubscription(NEW_CONTACT);
+	const { data: newNtData, error: newNtError } = useSubscription(NEW_NOTIFICATION);
 	const { data: delCtData, error: delCtError } = useSubscription(DELETE_CONTACT_SUB);
+	useQuery(GET_NOTIFICATIONS, {
+		onError(err) {
+			console.log(err);
+		},
+		onCompleted(data) {
+			dispatch({ type: SET_NOTIFICATIONS, payload: data.getNotifications });
+		}
+	});
 	const dispatch = useDispatch();
+	const FABClickhandler = () => {
+		dispatch({ type: OPEN_NOT_DIALOG });
+	};
 	const [
 		loading,
 		setLoading
@@ -175,6 +206,25 @@ function Home(props) {
 			delCtError
 		]
 	);
+	useEffect(
+		() => {
+			if (newNtError) {
+				console.log(newNtError);
+			}
+
+			if (newNtData) {
+				const payload = newNtData.newNotification;
+				dispatch({
+					type    : ADD_NOTIFICATION,
+					payload
+				});
+			}
+		},
+		[
+			newNtData,
+			newNtError
+		]
+	);
 	let messageBox;
 	if (selectedContact.name === '') {
 		messageBox = (
@@ -256,6 +306,7 @@ function Home(props) {
 						</div>
 					</div>
 				</Paper>
+				<FABIcon onClick={FABClickhandler} />
 			</React.Fragment>
 		);
 	}

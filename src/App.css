@@ -105,6 +105,14 @@ body {
 	display: none;
 }
 
+.not__dialog {
+	scrollbar-width: none;
+}
+
+.not__dialog::-webkit-scrollbar {
+	display: none;
+}
+
 .loader,
 .loader:before,
 .loader:after {

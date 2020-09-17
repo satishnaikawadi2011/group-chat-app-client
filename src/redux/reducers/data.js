@@ -1,11 +1,15 @@
 import {
 	ADD_MEMBER,
 	ADD_MESSAGE,
+	ADD_NOTIFICATION,
+	DELETE_CONTACT,
+	READ_NOTIFICATIONS,
 	REMOVE_MEMBER,
 	SELECT_CONTACT,
 	SET_GROUP,
 	SET_LATEST_MESSAGES,
-	SET_MESSAGES
+	SET_MESSAGES,
+	SET_NOTIFICATIONS
 } from '../types';
 
 const initialState = {
@@ -15,7 +19,8 @@ const initialState = {
 		type : '',
 		name : ''
 	},
-	group           : {}
+	group           : {},
+	notifications   : []
 };
 
 export default function(state = initialState, action) {
@@ -29,6 +34,11 @@ export default function(state = initialState, action) {
 			return {
 				...state,
 				latestMessages : action.payload
+			};
+		case DELETE_CONTACT:
+			delete state.latestMessages[action.payload.name];
+			return {
+				...state
 			};
 		case SELECT_CONTACT:
 			return {
@@ -92,6 +102,32 @@ export default function(state = initialState, action) {
 					...state.group,
 					members : state.group.members.filter((m) => m.username !== action.payload)
 				}
+			};
+		case SET_NOTIFICATIONS:
+			return {
+				...state,
+				notifications : action.payload
+			};
+		case ADD_NOTIFICATION:
+			return {
+				...state,
+				notifications : [
+					action.payload,
+					...state.notifications
+				]
+			};
+		case READ_NOTIFICATIONS:
+			const readNots = state.notifications.map((not) => {
+				return {
+					...not,
+					read : true
+				};
+			});
+			return {
+				...state,
+				notifications : [
+					...readNots
+				]
 			};
 		default:
 			return state;
