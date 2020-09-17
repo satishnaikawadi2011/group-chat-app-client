@@ -9,7 +9,7 @@ import MenuList from '@material-ui/core/MenuList';
 import { makeStyles } from '@material-ui/core/styles';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { useDispatch, useSelector } from 'react-redux';
-import { OPEN_DIALOG, TOGGLE_THEME } from '../redux/types';
+import { OPEN_DIALOG, OPEN_DRAWER, TOGGLE_DRAWER, TOGGLE_THEME } from '../redux/types';
 import { logout } from '../redux/actions/user';
 
 const useStyles = makeStyles((theme) => ({
@@ -53,7 +53,9 @@ export default function MenuListComposition() {
 			setOpen(false);
 		}
 	}
-
+	const handleProfileInfo = () => {
+		dispatch({ type: OPEN_DRAWER, payload: 'profile-info' });
+	};
 	const handleCreate = (type) => {
 		dispatch({ type: OPEN_DIALOG, payload: { type } });
 	};
@@ -104,7 +106,7 @@ export default function MenuListComposition() {
 									<MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
 										<MenuItem onClick={() => handleCreate('group')}>New Group</MenuItem>
 										<MenuItem onClick={() => handleCreate('personal')}>New Contact</MenuItem>
-										<MenuItem onClick={() => console.log('logout')}>Profile</MenuItem>
+										<MenuItem onClick={handleProfileInfo}>Profile</MenuItem>
 										<MenuItem onClick={handleLogout}>Logout</MenuItem>
 									</MenuList>
 								</ClickAwayListener>

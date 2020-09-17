@@ -9,7 +9,7 @@ import MenuList from '@material-ui/core/MenuList';
 import { makeStyles } from '@material-ui/core/styles';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { useDispatch, useSelector } from 'react-redux';
-import { OPEN_DIALOG, TOGGLE_DRAWER, TOGGLE_THEME } from '../redux/types';
+import { OPEN_DIALOG, OPEN_DRAWER, TOGGLE_DRAWER, TOGGLE_THEME } from '../redux/types';
 import { logout } from '../redux/actions/user';
 
 const useStyles = makeStyles((theme) => ({
@@ -62,9 +62,6 @@ export default function MenuListComposition() {
 	const handleLogout = () => {
 		dispatch(logout());
 	};
-	const toggleTheme = () => {
-		dispatch({ type: TOGGLE_THEME });
-	};
 	const { isDarkTheme } = useSelector((state) => state.ui);
 	const { selectedContact: { type } } = useSelector((state) => state.data);
 	const prevOpen = useRef(open);
@@ -88,7 +85,7 @@ export default function MenuListComposition() {
 		menuList = (
 			<MenuItem
 				onClick={() => {
-					dispatch({ type: TOGGLE_DRAWER });
+					dispatch({ type: OPEN_DRAWER, payload: 'group-info' });
 				}}
 			>
 				Group Info

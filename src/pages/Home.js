@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Paper from '@material-ui/core/Paper';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { useMutation, useQuery } from '@apollo/client';
-import { DELETE_CONTACT_SUB, GET_USER, NEW_CONTACT, NEW_MESSAGE, SEND_MESSAGE } from '../utils/graphql';
+import { DELETE_CONTACT_SUB, GET_MESSAGES, GET_USER, NEW_CONTACT, NEW_MESSAGE, SEND_MESSAGE } from '../utils/graphql';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserData } from '../redux/actions/user';
 import ContactList from '../components/ContactList';
@@ -16,6 +16,8 @@ import SendIcon from '@material-ui/icons/Send';
 import Avatar from '@material-ui/core/Avatar';
 import { CircularProgress, Typography, useTheme } from '@material-ui/core';
 import AppIcon from '../images/logo.svg';
+import { client } from '../utils/ApolloProvider';
+import GroupInfoDrawer from '../components/GroupInfoDrawer';
 
 const useStyles = makeStyles({
 	container   : {
@@ -67,6 +69,10 @@ const useStyles = makeStyles({
 });
 
 function Home(props) {
+	const [
+		messageInfo,
+		setMessageInfo
+	] = useState({});
 	const theme = useTheme();
 	const classes = useStyles();
 	const [
@@ -74,6 +80,7 @@ function Home(props) {
 		setContent
 	] = useState('');
 	const { selectedContact } = useSelector((state) => state.data);
+	const { purpose } = useSelector((state) => state.ui.drawer);
 	const { username } = useSelector((state) => state.user.userData);
 	const { data: msgData, error: msgError } = useSubscription(NEW_MESSAGE);
 	const { data: newCtData, error: newCtError } = useSubscription(NEW_CONTACT);
@@ -209,6 +216,7 @@ function Home(props) {
 				<DialogForm />
 				<Paper className={classes.container}>
 					<Menu />
+					{purpose !== 'group-info' && <GroupInfoDrawer />}
 					<div style={{ display: 'flex' }}>
 						<div className={classes.contactList} style={{ backgroundColor: theme.palette.action.disabled }}>
 							<ContactList userData={userData} />

@@ -1,13 +1,16 @@
-import { CLOSE_DIALOG, OPEN_DIALOG, TOGGLE_DRAWER, TOGGLE_THEME } from '../types';
+import { CLOSE_DIALOG, CLOSE_DRAWER, OPEN_DIALOG, OPEN_DRAWER, TOGGLE_DRAWER, TOGGLE_THEME } from '../types';
 
 const initialState = {
-	dialog       : {
+	dialog      : {
 		type   : '',
 		open   : false,
 		member : null
 	},
-	isDrawerOpen : false,
-	isDarkTheme  : false
+	drawer      : {
+		isDrawerOpen : false,
+		purpose      : ''
+	},
+	isDarkTheme : false
 };
 
 export default function(state = initialState, action) {
@@ -39,10 +42,23 @@ export default function(state = initialState, action) {
 				...state,
 				isDarkTheme : !state.isDarkTheme
 			};
-		case TOGGLE_DRAWER:
+		case OPEN_DRAWER:
 			return {
 				...state,
-				isDrawerOpen : !state.isDrawerOpen
+				drawer : {
+					...state.drawer,
+					isDrawerOpen : true,
+					purpose      : action.payload
+				}
+			};
+		case CLOSE_DRAWER:
+			return {
+				...state,
+				drawer : {
+					...state.drawer,
+					isDrawerOpen : false,
+					purpose      : ''
+				}
 			};
 		default:
 			return state;

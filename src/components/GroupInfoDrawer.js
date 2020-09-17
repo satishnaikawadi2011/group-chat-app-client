@@ -11,7 +11,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { useDispatch, useSelector } from 'react-redux';
-import { DELETE_CONTACT, OPEN_DIALOG, REMOVE_MEMBER, SELECT_CONTACT, SET_GROUP, TOGGLE_DRAWER } from '../redux/types';
+import { CLOSE_DRAWER, DELETE_CONTACT, OPEN_DIALOG, REMOVE_MEMBER, SELECT_CONTACT, SET_GROUP } from '../redux/types';
 import { Avatar, CircularProgress, ListItemAvatar, ListItemSecondaryAction } from '@material-ui/core';
 import moment from 'moment';
 import CreateIcon from '@material-ui/icons/Create';
@@ -19,8 +19,12 @@ import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import PersonIcon from '@material-ui/icons/Person';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import { useMutation, useQuery } from '@apollo/client';
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import { DELETE_GROUP_MUT, GET_GROUP, LEFT_GROUP_MUT, REMOVE_MEMBER_MUT } from '../utils/graphql';
+import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
+import GroupIcon from '@material-ui/icons/Group';
+import EmailIcon from '@material-ui/icons/Email';
+import VpnKeyIcon from '@material-ui/icons/VpnKey';
 
 const drawerWidth = 400;
 
@@ -58,8 +62,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function PersistentDrawerRight({ name }) {
-	const { isDrawerOpen } = useSelector((state) => state.ui);
-	const { username } = useSelector((state) => state.user.userData);
+	const { isDrawerOpen, purpose } = useSelector((state) => state.ui.drawer);
+	const { username, groups, contacts, email, id, createdAt } = useSelector((state) => state.user.userData);
 	const { group } = useSelector((state) => state.data);
 	const [
 		loading,
@@ -68,7 +72,9 @@ export default function PersistentDrawerRight({ name }) {
 	const dispatch = useDispatch();
 	const classes = useStyles();
 	const theme = useTheme();
-	useQuery(GET_GROUP, {
+	const [
+		getGroup
+	] = useLazyQuery(GET_GROUP, {
 		onError(err) {
 			console.log(err);
 		},
@@ -98,7 +104,7 @@ export default function PersistentDrawerRight({ name }) {
 		onCompleted(data) {
 			dispatch({ type: DELETE_CONTACT, payload: { name: group.name, type: 'group' } });
 			dispatch({ type: SELECT_CONTACT, payload: { type: '', name: '' } });
-			dispatch({ type: TOGGLE_DRAWER });
+			dispatch({ type: CLOSE_DRAWER });
 			setLoading(false);
 		}
 	});
@@ -111,10 +117,20 @@ export default function PersistentDrawerRight({ name }) {
 		onCompleted(data) {
 			dispatch({ type: DELETE_CONTACT, payload: { name: group.name, type: 'group' } });
 			dispatch({ type: SELECT_CONTACT, payload: { type: '', name: '' } });
-			dispatch({ type: TOGGLE_DRAWER });
+			dispatch({ type: CLOSE_DRAWER });
 			setLoading(false);
 		}
 	});
+	useEffect(
+		() => {
+			if (purpose === 'group-info') {
+				getGroup();
+			}
+		},
+		[
+			purpose
+		]
+	);
 	const handleDeleteGroup = () => {
 		setLoading(true);
 		deleteGroup({ variables: { id: group.id } });
@@ -128,15 +144,19 @@ export default function PersistentDrawerRight({ name }) {
 		removeMember({ variables: { otherUsername: membername, groupName: group.name } });
 	};
 	const handleDrawerClose = () => {
-		dispatch({ type: TOGGLE_DRAWER });
+		dispatch({ type: CLOSE_DRAWER });
 	};
 	const handleAddMember = () => {
 		dispatch({ type: OPEN_DIALOG, payload: { type: 'personal', member: true } });
 	};
 	let dataDependentUI;
-	if (!loading) {
+	if (!loading && purpose === 'group-info') {
 		dataDependentUI = (
 			<React.Fragment>
+				<Typography
+					variant="h5"
+					style={{ textAlign: 'center', margin: '10px auto 10px auto' }}
+				>{`Group Name : ${name}`}</Typography>
 				<Divider />
 				<div style={{ display: 'flex', justifyContent: 'space-around', margin: '10px auto 10px auto' }}>
 					{' '}
@@ -240,6 +260,86 @@ export default function PersistentDrawerRight({ name }) {
 			</React.Fragment>
 		);
 	}
+	else if (purpose === 'profile-info') {
+		dataDependentUI = (
+			<React.Fragment>
+				<Divider />
+				<div style={{ display: 'flex', justifyContent: 'space-around', margin: '10px auto 10px auto' }}>
+					{' '}
+					<CalendarTodayIcon />{' '}
+					<Typography style={{ marginLeft: 5 }} variant="body1">{`Joined on ${moment(createdAt).format(
+						'DD/MM/YYYY'
+					)} at ${moment(createdAt).format('hh:mm a')}`}</Typography>
+				</div>
+				<Divider />
+				<div style={{ textAlign: 'center', padding: 20 }}>
+					<div style={{ display: 'flex', justifyContent: 'center', margin: '10px auto 10px auto' }}>
+						{' '}
+						<VpnKeyIcon />{' '}
+						<Typography style={{ marginLeft: 5 }} variant="body1">
+							{id}
+						</Typography>
+					</div>
+					<Typography variant="caption" style={{ fontStyle: 'italic', color: '#ffcc00' }}>
+						This is your unique userId.Share this with whom you wants to contact or chat !
+					</Typography>
+				</div>
+				<Divider />
+				<div style={{ display: 'flex', justifyContent: 'space-around', margin: '10px auto 10px auto' }}>
+					{' '}
+					<EmailIcon />{' '}
+					<Typography style={{ marginLeft: 5 }} variant="body1">
+						{email}
+					</Typography>
+				</div>
+				<Divider />
+				<Typography
+					style={{ margin: '10px auto 10px auto' }}
+					variant="h6"
+				>{`Participation in ${groups.length} Groups`}</Typography>
+				<Divider />
+				<List>
+					{groups.map((group) => {
+						return (
+							<React.Fragment key={group}>
+								<ListItem>
+									<ListItemAvatar>
+										<Avatar>
+											<GroupIcon />
+										</Avatar>
+									</ListItemAvatar>
+									<ListItemText primary={group} />
+								</ListItem>
+								<Divider />
+							</React.Fragment>
+						);
+					})}
+				</List>
+				<Typography
+					style={{ margin: '10px auto 10px auto' }}
+					variant="h6"
+				>{`${contacts.length} Contacts`}</Typography>
+				<Divider />
+				<List>
+					{contacts.map((contact) => {
+						return (
+							<React.Fragment key={contact}>
+								<ListItem>
+									<ListItemAvatar>
+										<Avatar>
+											<PersonIcon />
+										</Avatar>
+									</ListItemAvatar>
+									<ListItemText primary={contact} />
+								</ListItem>
+								<Divider />
+							</React.Fragment>
+						);
+					})}
+				</List>
+			</React.Fragment>
+		);
+	}
 	else {
 		dataDependentUI = (
 			<div className={classes.loader}>
@@ -263,7 +363,11 @@ export default function PersistentDrawerRight({ name }) {
 							theme.direction === 'rtl' ? <ChevronLeftIcon /> :
 							<ChevronRightIcon />}
 					</IconButton>
-					<Typography variant="h5">Group Info</Typography>
+					<Typography variant="h5">
+						{
+							purpose === 'group-info' ? 'Group Info' :
+							'Your Profile'}
+					</Typography>
 				</div>
 				<Divider />
 				<Avatar
@@ -276,13 +380,11 @@ export default function PersistentDrawerRight({ name }) {
 						margin          : '20px auto 20px auto'
 					}}
 				>
-					{name[0]}
+					{
+						purpose === 'group-info' ? name[0] :
+						username[0]}
 				</Avatar>
 				<Divider />
-				<Typography
-					variant="h5"
-					style={{ textAlign: 'center', margin: '10px auto 10px auto' }}
-				>{`Group Name : ${name}`}</Typography>
 				{dataDependentUI}
 			</Drawer>
 		</div>
