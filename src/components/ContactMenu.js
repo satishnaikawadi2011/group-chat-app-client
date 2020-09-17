@@ -9,8 +9,18 @@ import MenuList from '@material-ui/core/MenuList';
 import { makeStyles } from '@material-ui/core/styles';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { useDispatch, useSelector } from 'react-redux';
-import { OPEN_DIALOG, OPEN_DRAWER, TOGGLE_DRAWER, TOGGLE_THEME } from '../redux/types';
+import {
+	DELETE_CONTACT,
+	OPEN_DIALOG,
+	OPEN_DRAWER,
+	SELECT_CONTACT,
+	SET_MESSAGES,
+	TOGGLE_DRAWER,
+	TOGGLE_THEME
+} from '../redux/types';
 import { logout } from '../redux/actions/user';
+import { useMutation } from '@apollo/client';
+import { REMOVE_CONTACT_MUT } from '../utils/graphql';
 
 const useStyles = makeStyles((theme) => ({
 	root  : {
@@ -39,7 +49,21 @@ export default function MenuListComposition() {
 	const handleToggle = () => {
 		setOpen((prevOpen) => !prevOpen);
 	};
-
+	const [
+		removeContact
+	] = useMutation(REMOVE_CONTACT_MUT, {
+		onError(err) {
+			console.log(err);
+		},
+		onCompleted(data) {
+			dispatch({ type: DELETE_CONTACT, payload: { type: 'personal', name: data.removeContact } });
+			dispatch({ type: SET_MESSAGES, payload: [] });
+			dispatch({ type: SELECT_CONTACT, paylaod: { type: '', name: '' } });
+		}
+	});
+	const handleRemoveContact = () => {
+		removeContact({ variables: { username: name } });
+	};
 	const handleClose = (event) => {
 		if (anchorRef.current && anchorRef.current.contains(event.target)) {
 			return;
@@ -63,7 +87,7 @@ export default function MenuListComposition() {
 		dispatch(logout());
 	};
 	const { isDarkTheme } = useSelector((state) => state.ui);
-	const { selectedContact: { type } } = useSelector((state) => state.data);
+	const { selectedContact: { type, name } } = useSelector((state) => state.data);
 	const prevOpen = useRef(open);
 	useEffect(
 		() => {
@@ -79,7 +103,7 @@ export default function MenuListComposition() {
 	);
 	let menuList;
 	if (type === 'personal') {
-		menuList = <MenuItem onClick={() => console.log('Remove Contact')}>Remove Contact</MenuItem>;
+		menuList = <MenuItem onClick={handleRemoveContact}>Remove Contact</MenuItem>;
 	}
 	else if (type === 'group') {
 		menuList = (

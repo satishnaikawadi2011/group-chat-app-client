@@ -148,3 +148,9 @@ export const DELETE_GROUP_MUT = gql`
 		deleteGroup(id: $id)
 	}
 `;
+
+export const REMOVE_CONTACT_MUT = gql`
+	mutation removeContact($username: String!) {
+		removeContact(username: $username)
+	}
+`;

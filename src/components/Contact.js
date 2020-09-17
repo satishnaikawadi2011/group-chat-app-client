@@ -12,7 +12,7 @@ const useStyle = makeStyles({
 		margin   : 10,
 		padding  : 10,
 		display  : 'flex',
-		width    : 350,
+		width    : 'calc(80vw/3.5)',
 		position : 'relative',
 		cursor   : 'pointer'
 	},

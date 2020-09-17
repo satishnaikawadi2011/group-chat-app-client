@@ -63,7 +63,7 @@ body {
 .form {
 	display: flex;
 	/* width: 100%; */
-	width: calc(80vw - 370px);
+	width: calc(80vw - (80vw/3.3));
 	position: fixed;
 	bottom: 0;
 	height: 70px;
@@ -87,12 +87,21 @@ body {
 
 .message-box {
 	height: 90vh;
-	width: calc(80vw - 370px);
+	width: calc(80vw - (80vw/3.3));
 	overflow: auto;
 	position: relative;
 	scrollbar-width: none;
+	border: 2px solid #33cccc;
 }
 .message-box::-webkit-scrollbar {
+	display: none;
+}
+
+.contact__list {
+	scrollbar-width: none;
+}
+
+.contact__list::-webkit-scrollbar {
 	display: none;
 }
 

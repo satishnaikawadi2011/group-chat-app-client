@@ -11,7 +11,7 @@ import DialogForm from '../components/DialogForm';
 import Messages from '../components/Messages';
 import Message from '../components/Message';
 import { useSubscription } from '@apollo/client';
-import { ADD_CONTACT, ADD_MESSAGE, DELETE_CONTACT } from '../redux/types';
+import { ADD_CONTACT, ADD_MESSAGE, DELETE_CONTACT, SELECT_CONTACT, SET_MESSAGES } from '../redux/types';
 import SendIcon from '@material-ui/icons/Send';
 import Avatar from '@material-ui/core/Avatar';
 import { CircularProgress, Typography, useTheme } from '@material-ui/core';
@@ -63,8 +63,8 @@ const useStyles = makeStyles({
 		overflow  : 'auto',
 		height    : '90vh',
 		marginTop : '40px',
-		// width     : 370
-		width     : 'calc(80vw/3.3)'
+		width     : 'calc(80vw/3.3)',
+		border    : '1px solid #33cccc'
 	}
 });
 
@@ -164,6 +164,10 @@ function Home(props) {
 							payload.type !== 'personal' ? { name: payload.name, type: 'group' } :
 							payload
 				});
+				if (selectedContact.name === payload.name) {
+					dispatch({ type: SET_MESSAGES, payload: [] });
+					dispatch({ type: SELECT_CONTACT, payload: { type: '', name: '' } });
+				}
 			}
 		},
 		[
@@ -218,7 +222,10 @@ function Home(props) {
 					<Menu />
 					{purpose !== 'group-info' && <GroupInfoDrawer />}
 					<div style={{ display: 'flex' }}>
-						<div className={classes.contactList} style={{ backgroundColor: theme.palette.action.disabled }}>
+						<div
+							className={`${classes.contactList} contact__list`}
+							style={{ backgroundColor: theme.palette.action.disabled }}
+						>
 							<ContactList userData={userData} />
 						</div>
 						<div

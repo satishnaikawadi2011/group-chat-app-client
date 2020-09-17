@@ -114,12 +114,14 @@ function Messages() {
 		<React.Fragment>
 			<div
 				style={{
-					height          : 50,
+					height          : 70,
 					width           : 'calc(80vw - (80vw/3.3))',
 					backgroundColor : bgBar,
 					position        : 'fixed',
 					zIndex          : 2,
-					display         : 'flex'
+					display         : 'flex',
+					borderBottom    : '2px solid #33cccc',
+					padding         : 5
 				}}
 			>
 				<Avatar style={{ padding: 10, backgroundColor: '#33cccc', margin: 5, marginLeft: 20 }}>

@@ -45,7 +45,6 @@ export default function(state = initialState, action) {
 				};
 			}
 		case DELETE_CONTACT:
-			// console.log(action.payload, 'payload');
 			if (action.payload.type === 'personal') {
 				return {
 					...state,
