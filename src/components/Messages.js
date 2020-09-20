@@ -9,6 +9,7 @@ import ContactMenu from '../components/ContactMenu';
 import GroupInfoDrawer from './GroupInfoDrawer';
 import { useTheme } from '@material-ui/core';
 import { client } from '../utils/ApolloProvider';
+import MessagesSkeleton from './skeletons/MessagesSkeleton';
 
 const useStyles = makeStyles({
 	loader : {
@@ -104,11 +105,7 @@ function Messages() {
 	// 	}
 	// }, []);
 	if (loading) {
-		return (
-			<div className={classes.loader}>
-				<div className="loader">Loading...</div>
-			</div>
-		);
+		return <MessagesSkeleton type={type} />;
 	}
 	return (
 		<React.Fragment>
@@ -148,7 +145,7 @@ function Messages() {
 					}
 					else if (index === messages.length - 1) {
 						return (
-							<div key={message.id} style={{ marginTop: 60 }}>
+							<div key={message.id} style={{ marginTop: 80 }}>
 								<Message message={message} />
 							</div>
 						);

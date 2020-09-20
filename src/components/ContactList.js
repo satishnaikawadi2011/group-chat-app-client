@@ -6,6 +6,7 @@ import { SET_LATEST_MESSAGES } from '../redux/types';
 import { GET_LATEST_MESSAGES } from '../utils/graphql';
 import Contact from './Contact';
 import ContactIcon from '../images/no-contacts.svg';
+import ContactListSkeleton from './skeletons/ContactListSkeleton';
 
 const useStyles = makeStyles({
 	loader            : {
@@ -92,11 +93,7 @@ function ContactList(props) {
 		);
 	}
 	if (loading) {
-		return (
-			<div className={classes.loader}>
-				<div className="loader" />
-			</div>
-		);
+		return <ContactListSkeleton />;
 	}
 	else {
 		return contactListmarkup;
